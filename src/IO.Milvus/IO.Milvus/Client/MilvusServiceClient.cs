@@ -11,8 +11,6 @@ namespace IO.Milvus.Client
     {
         public MilvusServiceClient(ConnectParam connectParam)
         {
-            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-
             metadata = new Metadata()
             {
                 {"authorization",connectParam.Authorization }

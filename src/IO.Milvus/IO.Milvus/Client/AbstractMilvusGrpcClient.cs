@@ -71,7 +71,24 @@ namespace IO.Milvus.Client
 
         public R<RpcStatus> CreateCollection(CreateCollectionParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<RpcStatus>.Failed<RpcStatus>(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                //var collectionSchema = new CollectionSchema()
+                //{
+                //    AutoID = requestParam.a
+                //}
+                return null;
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
         }
 
         public R<RpcStatus> CreateCredential(CreateCredentialParam requestParam)
