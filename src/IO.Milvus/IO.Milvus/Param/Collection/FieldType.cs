@@ -1,4 +1,5 @@
-﻿using IO.Milvus.Grpc;
+﻿using IO.Milvus.Exception;
+using IO.Milvus.Grpc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -24,6 +25,11 @@ namespace IO.Milvus.Param.Collection
         public FieldType([NotNull] Builder builder)
         {
             this.name = builder.name;
+            this.primaryKey = builder.primaryKey;
+            this.description = builder.description;
+            this.dataType = builder.dataType;
+            this.typeParams = builder.typeParams;
+            this.autoID = builder.autoID;
         }
         #endregion
 
@@ -46,9 +52,9 @@ namespace IO.Milvus.Param.Collection
             internal string name;
             internal bool primaryKey = false;
             internal string description = "";
-            private DataType dataType;
-            private Dictionary<string, string> typeParams = new Dictionary<string,string>();
-            private bool autoID = false;
+            internal DataType dataType;
+            internal Dictionary<string, string> typeParams = new Dictionary<string,string>();
+            internal bool autoID = false;
 
             internal Builder()
             {
@@ -101,7 +107,7 @@ namespace IO.Milvus.Param.Collection
             /// <param name="key">parameter key</param>
             /// <param name="value">parameter value</param>
             /// <returns><see cref="Builder"/></returns>
-            /// <exception cref="ArgumentException"></exception>
+            /// <exception cref="ParamException"></exception>
             public Builder AddTypeParam([NotNull] string key,[NotNull] string value)
             {
                 if (string.IsNullOrEmpty(key))
@@ -179,30 +185,27 @@ namespace IO.Milvus.Param.Collection
             ///  Verifies parameters and creates a new <see cref="FieldType"/> instance.
             /// </summary>
             /// <returns><see cref="FieldType"/></returns>
-            /// <exception cref="ArgumentException"></exception>
+            /// <exception cref="ParamException"></exception>
             public FieldType Build()
             {
-                if (string.IsNullOrEmpty(name))
-                {
-                    throw new ArgumentException($"“Field Name”Cannot be null or empty.", nameof(name));
-                }
+                ParamUtils.CheckNullEmptyString(name, "Field name");
 
                 if (dataType == DataType.None)
                 {
-                    throw new ArgumentException("Field data type is illegal");
+                    throw new ParamException("Field data type is illegal");
                 }
 
                 //TODO: Need Check
                 //if (dataType == DataType.String)
                 //{
-                //    throw new ArgumentException("String type is not supported, use VarChar instead");
+                //    throw new ParamException("String type is not supported, use VarChar instead");
                 //}
 
                 if (dataType == DataType.FloatVector || dataType == DataType.BinaryVector)
                 {
                     if (!typeParams.ContainsKey(Constant.VECTOR_DIM))
                     {
-                        throw new ArgumentException("Vector field dimension must be specified");
+                        throw new ParamException("Vector field dimension must be specified");
                     }
 
                     try
@@ -210,12 +213,12 @@ namespace IO.Milvus.Param.Collection
                         int dim = int.Parse(typeParams[Constant.VECTOR_DIM]);
                         if (dim <= 0)
                         {
-                            throw new ArgumentException("Vector field dimension must be larger than zero");
+                            throw new ParamException("Vector field dimension must be larger than zero");
                         }
                     }
                     catch (FormatException)
                     {
-                        throw new ArgumentException("Vector field dimension must be an integer number");
+                        throw new ParamException("Vector field dimension must be an integer number");
                     }
                 }
 
@@ -223,7 +226,7 @@ namespace IO.Milvus.Param.Collection
                 {
                     if (!typeParams.ContainsKey(Constant.VARCHAR_MAX_LENGTH))
                     {
-                        throw new ArgumentException("Varchar field max length must be specified");
+                        throw new ParamException("Varchar field max length must be specified");
                     }
 
                     try
@@ -231,12 +234,12 @@ namespace IO.Milvus.Param.Collection
                         int len = int.Parse(typeParams[Constant.VARCHAR_MAX_LENGTH]);
                         if (len <= 0)
                         {
-                            throw new ArgumentException("Varchar field max length must be larger than zero");
+                            throw new ParamException("Varchar field max length must be larger than zero");
                         }
                     }
                     catch (FormatException)
                     {
-                        throw new ArgumentException("Varchar field max length must be an integer number");
+                        throw new ParamException("Varchar field max length must be an integer number");
                     }
                 }
 
