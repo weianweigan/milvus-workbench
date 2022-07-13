@@ -14,9 +14,9 @@ namespace IO.Milvus.Param
 
         public T Data { get; set; }
 
-        public static R<object> Failed(System.Exception exception)
+        public static R<TData> Failed<TData>(System.Exception exception)
         {
-            var r = new R<object>()
+            var r = new R<TData>()
             {
                 Exception = exception
             };
@@ -30,6 +30,15 @@ namespace IO.Milvus.Param
                 r.Status = Status.Unknown;
             }
 
+            return r;
+        }
+
+        public static R<T> Failed<T>(ErrorCode errorCode, String msg)
+        {
+            var r = new R<T>();
+            //TODO:Check if it is right
+            r.Status = (Status)errorCode;
+            r.Exception = new System.Exception(msg);
             return r;
         }
 

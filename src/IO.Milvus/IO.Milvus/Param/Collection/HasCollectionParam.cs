@@ -8,8 +8,6 @@ namespace IO.Milvus.Param.Collection
     /// </summary>
     public class HasCollectionParam
     {
-        private string collectionName;
-
         private HasCollectionParam([NotNull] Builder builder)
         {
             if (builder is null)
@@ -17,8 +15,10 @@ namespace IO.Milvus.Param.Collection
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            this.collectionName = builder.collectionName;
+            this.CollectionName = builder.collectionName;
         }
+
+        public string CollectionName { get;}
 
         public static Builder NewBuilder()
         {
@@ -64,7 +64,7 @@ namespace IO.Milvus.Param.Collection
         /// <returns><code>string</code></returns>
         public override string ToString()
         {
-            return $"{nameof(HasCollectionParam)}{{{nameof(collectionName)}=\'{collectionName}\'}}";
+            return $"{nameof(HasCollectionParam)}{{{nameof(CollectionName)}=\'{CollectionName}\'}}";
         }
     }
 }

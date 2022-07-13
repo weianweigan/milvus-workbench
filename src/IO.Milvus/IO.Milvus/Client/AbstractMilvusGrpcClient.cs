@@ -1,4 +1,7 @@
-﻿using IO.Milvus.Grpc;
+﻿using Grpc.Core;
+using Grpc.Net.Client;
+using IO.Milvus.Exception;
+using IO.Milvus.Grpc;
 using IO.Milvus.Param;
 using IO.Milvus.Param.Alias;
 using IO.Milvus.Param.Collection;
@@ -14,6 +17,32 @@ namespace IO.Milvus.Client
 {
     public abstract class AbstractMilvusGrpcClient : IMilvusClient
     {
+        #region Fields
+        protected GrpcChannel channel;
+        protected MilvusService.MilvusServiceClient client;
+        protected Metadata metadata;
+        #endregion
+
+        #region Public Methods
+        public bool ClientIsReady()
+        {
+            return channel.State != ConnectivityState.Shutdown;
+        }
+
+        public void Close()
+        {
+            channel.ShutdownAsync().Wait();
+            channel.Dispose();
+        }
+
+        public async Task CloseAsync()
+        {
+            await channel.ShutdownAsync();
+            channel.Dispose();
+        }
+        #endregion
+
+        #region Api Methods
         public R<RpcStatus> AlterAlias(AlterAliasParam requestParam)
         {
             throw new NotImplementedException();
@@ -24,9 +53,15 @@ namespace IO.Milvus.Client
             throw new NotImplementedException();
         }
 
-        public void Close()
+        private R<T> FailedStatus<T>(string requestName, IO.Milvus.Grpc.Status status)
         {
-            throw new NotImplementedException();
+            var reason = status.Reason;
+            if (string.IsNullOrEmpty(reason))
+            {
+                reason = $"error code: {status.ErrorCode}" ;
+            }
+            //logError(requestName + " failed:\n{}", reason);
+            return R<T>.Failed<T>(status.ErrorCode, reason);
         }
 
         public R<RpcStatus> CreateAlias(CreateAliasParam requestParam)
@@ -146,7 +181,32 @@ namespace IO.Milvus.Client
 
         public R<bool> HasCollection(HasCollectionParam hasCollectionParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<bool>.Failed<bool>(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                var hasCollectionRequest = new HasCollectionRequest()
+                {
+                    CollectionName = hasCollectionParam.CollectionName,
+                };
+                var response = client.HasCollection(hasCollectionRequest,metadata);
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<bool>.Sucess(response.Value);
+                }
+                else
+                {
+                    return FailedStatus<bool>(nameof(HasCollectionRequest),response.Status);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return R<bool>.Failed<bool>(ex);
+            }
         }
 
         public R<bool> HasPartition(HasPartitionParam requestParam)
@@ -233,5 +293,6 @@ namespace IO.Milvus.Client
         {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }

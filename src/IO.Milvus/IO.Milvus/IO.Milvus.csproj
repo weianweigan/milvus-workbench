@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\common.proto" GrpcServices="Client" />
-    <Protobuf Include="Protos\schema.proto" GrpcServices="Client" ProtoRoot="Protos\" />
-    <Protobuf Include="Protos\milvus.proto" GrpcServices="Client" ProtoRoot="Protos\" />
+    <Protobuf Include="Protos\common.proto"/>
+    <Protobuf Include="Protos\schema.proto" ProtoRoot="Protos\" />
+    <Protobuf Include="Protos\milvus.proto" ProtoRoot="Protos\" />
   </ItemGroup>
 
   <ItemGroup>
