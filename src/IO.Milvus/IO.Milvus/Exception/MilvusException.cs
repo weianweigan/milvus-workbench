@@ -13,7 +13,9 @@ namespace IO.Milvus.Exception
         public MilvusException() { }
         
         public MilvusException(string message) : base(message) { }
-      
+
+        public MilvusException(string message,Status status) : base(message) { }
+
         public MilvusException(string message, System.Exception inner) : base(message, inner) { }
        
         protected MilvusException(
