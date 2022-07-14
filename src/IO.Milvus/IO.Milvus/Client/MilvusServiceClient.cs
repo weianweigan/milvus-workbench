@@ -16,7 +16,8 @@ namespace IO.Milvus.Client
                 {"authorization",connectParam.Authorization }
             };            
 
-            channel = GrpcChannel.ForAddress($"http://{connectParam.Host}:{connectParam.Port}");
+            string httpType = connectParam.UseHttps ? "https" : "http";
+            channel = GrpcChannel.ForAddress($"{httpType}://{connectParam.Host}:{connectParam.Port}");
             
             client = new MilvusService.MilvusServiceClient(channel);
         }

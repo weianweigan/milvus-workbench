@@ -60,5 +60,35 @@ namespace IO.Milvus.Client.Tests
             var service = DefaultService();
             await service.CloseAsync();
         }
+
+        [TestMethod()]
+        public void CreateCollectionTest()
+        {
+            var rd = new Random(DateTime.Now.Second);
+            var collectionName = $"test{rd.Next()}";
+            var service = DefaultService();
+            var r = service.CreateCollection(CreateCollectionParam
+                .NewBuilder()
+                .WithCollectionName(collectionName)
+                .WithFieldTypes(new List<FieldType>()                
+                {
+                    FieldType.NewBuilder()
+                    .WithName($"priKey{rd.Next()}")
+                    .WithDataType(Grpc.DataType.Int64)
+                    .WithIsPrimaryKey(true)
+                    .Build(),
+                })
+                .Build());
+
+            Assert.IsTrue(r.Status == Status.Success,r.Exception?.ToString());
+            Assert.IsNotNull(r.Data);
+
+            var hasR = service.HasCollection(HasCollectionParam.NewBuilder()
+                .WithCollcetionName(collectionName)
+                .Build());
+
+            Assert.IsTrue(hasR.Status == Status.Success);
+            Assert.IsTrue(hasR.Data);
+        }
     }
 }

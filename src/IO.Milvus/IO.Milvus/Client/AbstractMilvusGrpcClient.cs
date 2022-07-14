@@ -1,4 +1,5 @@
-﻿using Grpc.Core;
+﻿using Google.Protobuf;
+using Grpc.Core;
 using Grpc.Net.Client;
 using IO.Milvus.Exception;
 using IO.Milvus.Grpc;
@@ -10,7 +11,10 @@ using IO.Milvus.Param.Credential;
 using IO.Milvus.Param.Dml;
 using IO.Milvus.Param.Index;
 using IO.Milvus.Param.Partition;
+using IO.Milvus.Utils;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace IO.Milvus.Client
@@ -42,6 +46,25 @@ namespace IO.Milvus.Client
         }
         #endregion
 
+        #region Private Methods
+        private List<Grpc.KeyValuePair> AssembleKvPair(Dictionary<string,string> sourceDic)
+        {
+            var result = new List<Grpc.KeyValuePair>();
+            if (sourceDic.IsNotEmpty())
+            {
+                foreach (var kv in sourceDic)
+                {
+                    result.Add(new Grpc.KeyValuePair()
+                    {
+                        Key = kv.Key,
+                        Value = kv.Value
+                    });
+                }
+            }
+            return result;
+        }
+        #endregion
+
         #region Api Methods
         public R<RpcStatus> AlterAlias(AlterAliasParam requestParam)
         {
@@ -69,6 +92,12 @@ namespace IO.Milvus.Client
             throw new NotImplementedException();
         }
 
+        #region Collection
+        public R<ShowCollectionsResponse> ShowCollections(ShowCollectionsParam requestParam)
+        {
+            throw new NotImplementedException();
+        }
+
         public R<RpcStatus> CreateCollection(CreateCollectionParam requestParam)
         {
             if (!ClientIsReady())
@@ -78,18 +107,95 @@ namespace IO.Milvus.Client
 
             try
             {
-                //var collectionSchema = new CollectionSchema()
-                //{
-                //    AutoID = requestParam.a
-                //}
-                return null;
-            }
-            catch (System.Exception)
-            {
+                var schema = new CollectionSchema()
+                {
+                    Name = requestParam.CollectionName,
+                    Description = requestParam.Description,
+                };
 
-                throw;
+                long fieldID = 0;
+                foreach (var fieldType in requestParam.FieldTypes)
+                {
+                    var field = new FieldSchema()
+                    {
+                        FieldID = fieldID++,
+                        Name = fieldType.Name,
+                        IsPrimaryKey = fieldType.IsPrimaryKey,
+                        Description = fieldType.Description,
+                        DataType = fieldType.DataType,
+                        AutoID = fieldType.IsAutoID,
+                    };
+
+                    var typeParamsList = AssembleKvPair(fieldType.TypeParams);
+
+                    foreach (var item in typeParamsList)
+                    {
+                        field.TypeParams.Add(item);
+                    }
+
+                    schema.Fields.Add(field);
+                }
+                
+                var request = new CreateCollectionRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    ShardsNum = requestParam.ShardsNum,
+                    Schema = schema.ToByteString()
+                };
+
+                var response = client.CreateCollection(request);
+
+                if (response.ErrorCode == ErrorCode.Success)
+                {
+                    return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
+                }
+                else
+                {
+                    return FailedStatus<RpcStatus>(nameof(CreateCollectionRequest), response);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<RpcStatus>.Failed<RpcStatus>(e);
             }
         }
+
+        public R<RpcStatus> DropCollection(DropCollectionParam requestParam)
+        {
+            throw new NotImplementedException();
+        }
+
+        public R<bool> HasCollection(HasCollectionParam hasCollectionParam)
+        {
+            if (!ClientIsReady())
+            {
+                return R<bool>.Failed<bool>(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                var hasCollectionRequest = new HasCollectionRequest()
+                {
+                    CollectionName = hasCollectionParam.CollectionName,
+                };
+                var response = client.HasCollection(hasCollectionRequest, metadata);
+                
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<bool>.Sucess(response.Value);
+                }
+                else
+                {
+                    return FailedStatus<bool>(nameof(HasCollectionRequest), response.Status);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return R<bool>.Failed<bool>(ex);
+            }
+        }
+
+        #endregion
 
         public R<RpcStatus> CreateCredential(CreateCredentialParam requestParam)
         {
@@ -131,10 +237,6 @@ namespace IO.Milvus.Client
             throw new NotImplementedException();
         }
 
-        public R<RpcStatus> DropCollection(DropCollectionParam requestParam)
-        {
-            throw new NotImplementedException();
-        }
 
         public R<RpcStatus> DropIndex(DropIndexParam requestParam)
         {
@@ -194,36 +296,6 @@ namespace IO.Milvus.Client
         public R<GetQuerySegmentInfoResponse> GetQuerySegmentInfo(GetQuerySegmentInfoParam requestParam)
         {
             throw new NotImplementedException();
-        }
-
-        public R<bool> HasCollection(HasCollectionParam hasCollectionParam)
-        {
-            if (!ClientIsReady())
-            {
-                return R<bool>.Failed<bool>(new ClientNotConnectedException("Client rpc channel is not ready"));
-            }
-
-            try
-            {
-                var hasCollectionRequest = new HasCollectionRequest()
-                {
-                    CollectionName = hasCollectionParam.CollectionName,
-                };
-                var response = client.HasCollection(hasCollectionRequest,metadata);
-
-                if (response.Status.ErrorCode == ErrorCode.Success)
-                {
-                    return R<bool>.Sucess(response.Value);
-                }
-                else
-                {
-                    return FailedStatus<bool>(nameof(HasCollectionRequest),response.Status);
-                }
-            }
-            catch (System.Exception ex)
-            {
-                return R<bool>.Failed<bool>(ex);
-            }
         }
 
         public R<bool> HasPartition(HasPartitionParam requestParam)
@@ -287,11 +359,6 @@ namespace IO.Milvus.Client
         }
 
         public Task<R<SearchResults>> SearchAsync<TVector>(SearchParam<TVector> requestParam)
-        {
-            throw new NotImplementedException();
-        }
-
-        public R<ShowCollectionsResponse> ShowCollections(ShowCollectionsParam requestParam)
         {
             throw new NotImplementedException();
         }

@@ -19,6 +19,7 @@ namespace IO.Milvus.Param
             IdleTimeout = builder.idleTimeout;
             IsSecure = builder.secure;
             Authorization = builder.authorization;
+            UseHttps = builder.useHttps;
         }
         #endregion
 
@@ -39,7 +40,9 @@ namespace IO.Milvus.Param
 
         public TimeSpan IdleTimeout { get; }
 
-        public string Authorization { get; set; }
+        public string Authorization { get; }
+
+        public bool UseHttps { get; }
         #endregion
 
         #region Builder
@@ -60,6 +63,7 @@ namespace IO.Milvus.Param
             internal bool secure = false;
             internal TimeSpan idleTimeout = TimeSpan.FromHours(24);
             internal string authorization ="root:milvus".ToBase64();
+            internal bool useHttps = false;
 
             internal Builder() { }
 
@@ -75,36 +79,48 @@ namespace IO.Milvus.Param
                 return this;
             }
 
+            public Builder WithHttps(bool enable)
+            {
+                useHttps = enable;
+                return this;
+            }
+
+            [Obsolete("Useless")]
             public Builder WithConnectTimeout(TimeSpan connectTimeout)
             {
                 this.connectTimeout = connectTimeout;
                 return this;
             }
 
+            [Obsolete("Useless")]
             public Builder WithKeepAliveTime(TimeSpan keepAliveTime)
             {
                 this.keepAliveTime = keepAliveTime;
                 return this;
             }
 
+            [Obsolete("Useless")]
             public Builder WithKeepAliveTimeout(TimeSpan keepAliveTimeout)
             {
                 this.keepAliveTimeout = keepAliveTimeout;
                 return this;
             }
 
+            [Obsolete("Useless")]
             public Builder KeepAliveWithoutCalls(bool enable)
             {
                 this.keepAliveWithoutCalls = enable;
                 return this;
             }
 
+            [Obsolete("Useless")]
             public Builder Secure(bool enable)
             {
                 this.secure = enable;
                 return this;
             }
 
+            [Obsolete("Useless")]
             public Builder WithIdleTimeout(TimeSpan idleTimeout)
             {
                 this.idleTimeout = idleTimeout;
@@ -117,6 +133,7 @@ namespace IO.Milvus.Param
                 return this;
             }
 
+            [Obsolete("Useless")]
             public Builder WithSecure(bool secure)
             {
                 this.secure = secure;

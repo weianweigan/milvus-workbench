@@ -13,23 +13,17 @@ namespace IO.Milvus.Param.Collection
     public class FieldType
     {
         #region Fields
-        private string name;
-        private bool primaryKey;
-        private string description;
-        private DataType dataType;
-        private Dictionary<string, string> typeParams;
-        private bool autoID;
         #endregion
 
         #region Ctor
         public FieldType([NotNull] Builder builder)
         {
-            this.name = builder.name;
-            this.primaryKey = builder.primaryKey;
-            this.description = builder.description;
-            this.dataType = builder.dataType;
-            this.typeParams = builder.typeParams;
-            this.autoID = builder.autoID;
+            this.Name = builder.name;
+            this.IsPrimaryKey = builder.isPrimaryKey;
+            this.Description = builder.description;
+            this.DataType = builder.dataType;
+            this.TypeParams = builder.typeParams;
+            this.IsAutoID = builder.isAutoID;
         }
         #endregion
 
@@ -37,6 +31,18 @@ namespace IO.Milvus.Param.Collection
         public int Dimension { get; }
 
         public int MaxLength { get; }
+
+        public string Description { get; }
+
+        public bool IsPrimaryKey { get; }
+
+        public string Name { get; }
+
+        public DataType DataType { get; }
+
+        public Dictionary<string, string> TypeParams { get; }
+
+        public bool IsAutoID { get; }
         #endregion
 
         public static Builder NewBuilder()
@@ -50,11 +56,11 @@ namespace IO.Milvus.Param.Collection
         public sealed class Builder
         {
             internal string name;
-            internal bool primaryKey = false;
+            internal bool isPrimaryKey = false;
             internal string description = "";
             internal DataType dataType;
-            internal Dictionary<string, string> typeParams = new Dictionary<string,string>();
-            internal bool autoID = false;
+            internal Dictionary<string, string> typeParams = new Dictionary<string, string>();
+            internal bool isAutoID = false;
 
             internal Builder()
             {
@@ -72,9 +78,9 @@ namespace IO.Milvus.Param.Collection
             /// </summary>
             /// <param name="primaryKey">true is primary key, false is not</param>
             /// <returns><see cref="Builder"/></returns>
-            public Builder WithPrimaryKey(bool primaryKey)
+            public Builder WithIsPrimaryKey(bool primaryKey)
             {
-                this.primaryKey = primaryKey;
+                this.isPrimaryKey = primaryKey;
                 return this;
             }
 
@@ -108,7 +114,7 @@ namespace IO.Milvus.Param.Collection
             /// <param name="value">parameter value</param>
             /// <returns><see cref="Builder"/></returns>
             /// <exception cref="ParamException"></exception>
-            public Builder AddTypeParam([NotNull] string key,[NotNull] string value)
+            public Builder AddTypeParam([NotNull] string key, [NotNull] string value)
             {
                 if (string.IsNullOrEmpty(key))
                 {
@@ -130,7 +136,7 @@ namespace IO.Milvus.Param.Collection
             /// <param name="typeParams">parameters of the field</param>
             /// <returns><see cref="Builder"/></returns>
             /// <exception cref="ArgumentNullException"></exception>
-            public Builder WithTypeParams([NotNull] Dictionary<string,string> typeParams)
+            public Builder WithTypeParams([NotNull] Dictionary<string, string> typeParams)
             {
                 if (typeParams is null)
                 {
@@ -162,7 +168,7 @@ namespace IO.Milvus.Param.Collection
             /// <returns><see cref="Builder"/></returns>
             public Builder WithMaxLength([NotNull] int maxLength)
             {
-                this.typeParams.Add(Constant.VARCHAR_MAX_LENGTH,maxLength.ToString());
+                this.typeParams.Add(Constant.VARCHAR_MAX_LENGTH, maxLength.ToString());
                 return this;
             }
 
@@ -175,9 +181,9 @@ namespace IO.Milvus.Param.Collection
             /// </summary>
             /// <param name="autoID">true enable auto-id, false disable auto-id</param>
             /// <returns><see cref="Builder"/></returns>
-            public Builder WithAutoID(bool autoID)
+            public Builder WithIsAutoID(bool autoID)
             {
-                this.autoID = autoID;
+                this.isAutoID = autoID;
                 return this;
             }
 
@@ -253,7 +259,7 @@ namespace IO.Milvus.Param.Collection
         /// <returns><see cref="string"/></returns>
         public override string ToString()
         {
-            return $"FieldType{{name={name}\', type={dataType}\', primaryKey={primaryKey}, autoID={autoID}, params={typeParams}}}";
+            return $"FieldType{{name={Name}\', type={DataType}\', primaryKey={IsPrimaryKey}, autoID={IsAutoID}, params={TypeParams}}}";
         }
     }
 }
