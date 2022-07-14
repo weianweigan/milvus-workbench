@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using IO.Milvus.Utils;
+using System;
 
 namespace IO.Milvus.Param.Collection
 {
@@ -12,127 +13,74 @@ namespace IO.Milvus.Param.Collection
     public class CreateCollectionParam
     {
         #region Ctor
-        private CreateCollectionParam(Builder builder)
+        public CreateCollectionParam()
         {
-            CollectionName = builder.collectionName;
-            ShardsNum = builder.shardsNum;
-            Description = builder.description;
-            FieldTypes = builder.fieldTypes;
         }
+
+        public static CreateCollectionParam Create(
+            string collectionName,
+            int shardsNum,
+            IEnumerable<FieldType> fieldTypes,
+            string description = ""
+            )
+        {
+            var param = new CreateCollectionParam()
+            {
+                CollectionName = collectionName,
+                ShardsNum = shardsNum,
+                Description = description,
+            };
+
+            if (fieldTypes != null)
+            {
+                param.FieldTypes.AddRange(fieldTypes);
+            }
+
+            param.Check();
+
+            return param;
+        }
+
         #endregion
 
         #region Properties
-        public string CollectionName { get; }
+        public string CollectionName { get; set; }
 
-        public int ShardsNum { get; }
+        public int ShardsNum { get; set; } = 2;
 
         public string Description { get; set; }
 
-        public List<FieldType> FieldTypes { get; }
+        public List<FieldType> FieldTypes { get; } = new List<FieldType>();
         #endregion
 
-        #region Builder
-
-        public static Builder NewBuilder() => new Builder();
-
-        /// <summary>
-        /// Builder for <see cref="CreateCollectionParam"/> class
-        /// </summary>
-        public sealed class Builder
+        #region Methods
+        internal void Check()
         {
-            internal string collectionName;
-            internal int shardsNum = 2;
-            internal string description = "";
-            internal List<FieldType> fieldTypes = new List<FieldType>();
+            ParamUtils.CheckNullEmptyString(CollectionName, "Collection name");
 
-            internal Builder() { }
-
-            /// <summary>
-            /// Sets the collection name. Collection name cannot be empty or null.
-            /// </summary>
-            /// <param name="collectionName">collection Name</param>
-            /// <returns><see cref="Builder"/></returns>
-            public Builder WithCollectionName([NotNull] string collectionName)
+            if (ShardsNum <= 0)
             {
-                this.collectionName = collectionName;
-                return this;
+                throw new ParamException("ShardNum must be larger than 0");
             }
 
-            /// <summary>
-            /// Sets the shards number. The number must be greater than zero. The default value is 2.
-            /// </summary>
-            /// <param name="shardsNum">shards number to distribute insert data into multiple data nodes and query nodes.</param>
-            /// <returns></returns>
-            public Builder WithShardsNum(int shardsNum)
+            if (FieldTypes.IsEmpty())
             {
-                this.shardsNum = shardsNum;
-                return this;
+                throw new ParamException("Field numbers must be larger than 0");
             }
 
-            /// <summary>
-            /// Sets the collection description. The description can be empty. The default is "".
-            /// </summary>
-            /// <param name="description">description of the collection</param>
-            /// <returns><see cref="Builder"/></returns>
-            public Builder WithDescription([NotNull] string description)
+            if (FieldTypes.Any(p => p == null))
             {
-                this.description = description;
-                return this;
+                throw new ParamException("Collection field cannot be null");
             }
 
-            /// <summary>
-            /// Sets the schema of the collection. The schema cannot be empty or null.
-            /// </summary>
-            /// <param name="fieldTypes">a <code>List</code> of <see cref="FieldType"/></param>
-            /// <returns><see cref="Builder"/></returns>
-            public Builder WithFieldTypes([NotNull] List<FieldType> fieldTypes)
+            if (!FieldTypes.First().IsPrimaryKey || FieldTypes.First().DataType != Grpc.DataType.Int64)
             {
-                this.fieldTypes.AddRange(fieldTypes);
-                return this;
+                throw new ParamException("The first filedType's IsPrimaryKey must be true and DataType == Int64");
             }
 
-            /// <summary>
-            /// Adds a field schema.
-            /// <see cref="FieldType"/>
-            /// </summary>
-            /// <param name="fieldType"><see cref="FieldType"/></param>
-            /// <returns><see cref="Builder"/></returns>
-            public Builder AddFieldType([NotNull] FieldType fieldType)
-            {
-                this.fieldTypes.Add(fieldType);
-                return this;
-            }
-
-            /// <summary>
-            /// Verifies parameters and creates a new <see cref="CreateCollectionParam"/> instance.
-            /// </summary>
-            /// <returns><see cref="CreateCollectionParam"/></returns>
-            /// <exception cref="ParamException"></exception>
-            public CreateCollectionParam Build()
-            {
-                ParamUtils.CheckNullEmptyString(collectionName, "Collection name");
-
-                if (shardsNum <= 0)
-                {
-                    throw new ParamException("ShardNum must be larger than 0");
-                }
-
-                if (fieldTypes.IsEmpty())
-                {
-                    throw new ParamException("Field numbers must be larger than 0");
-                }
-
-                if (fieldTypes.Any(p => p == null))
-                {
-                    throw new ParamException("Collection field cannot be null");
-                }
-
-                return new CreateCollectionParam(this);
-            }
+            FieldTypes.ForEach(p => p.Check());
         }
-        #endregion
 
-        #region Public Method
         /// <summary>
         /// Constructs a <code>String</code> by <see cref="CreateCollectionParam"/> instance.
         /// </summary>

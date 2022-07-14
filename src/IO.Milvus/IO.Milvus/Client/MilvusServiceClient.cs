@@ -11,13 +11,14 @@ namespace IO.Milvus.Client
     {
         public MilvusServiceClient(ConnectParam connectParam)
         {
+            connectParam.Check();
+
             metadata = new Metadata()
             {
                 {"authorization",connectParam.Authorization }
             };            
 
-            string httpType = connectParam.UseHttps ? "https" : "http";
-            channel = GrpcChannel.ForAddress($"{httpType}://{connectParam.Host}:{connectParam.Port}");
+            channel = GrpcChannel.ForAddress(connectParam.GetAddress());
             
             client = new MilvusService.MilvusServiceClient(channel);
         }

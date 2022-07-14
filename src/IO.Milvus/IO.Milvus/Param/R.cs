@@ -14,9 +14,9 @@ namespace IO.Milvus.Param
 
         public T Data { get; set; }
 
-        public static R<TData> Failed<TData>(System.Exception exception)
+        public static R<T> Failed(System.Exception exception)
         {
-            var r = new R<TData>()
+            var r = new R<T>()
             {
                 Exception = exception
             };
@@ -33,7 +33,7 @@ namespace IO.Milvus.Param
             return r;
         }
 
-        public static R<T> Failed<T>(ErrorCode errorCode, String msg)
+        public static R<T> Failed(ErrorCode errorCode, string msg)
         {
             var r = new R<T>();
             //TODO:Check if it is right
@@ -42,9 +42,9 @@ namespace IO.Milvus.Param
             return r;
         }
 
-        public static R<TData> Failed<TData>(ErrorCode errorCode,System.Exception exception)
+        public static R<T> Failed(ErrorCode errorCode,System.Exception exception)
         {
-            return new R<TData>()
+            return new R<T>()
             {
                 //TODO:Check if it is right
                 Status = (Status)errorCode,
@@ -52,18 +52,18 @@ namespace IO.Milvus.Param
             };
         }
 
-        public static R<TData> Failed<TData>(Status status, System.Exception exception)
+        public static R<T> Failed(Status status, System.Exception exception)
         {
-            return new R<TData>()
+            return new R<T>()
             {
                 Status = status ,
                 Exception = exception
             };
         }
 
-        public static R<TData> Sucess<TData>(TData data)
+        public static R<T> Sucess(T data)
         {
-            return new R<TData>()
+            return new R<T>()
             {
                 Status = Status.Success,
                 Data = data

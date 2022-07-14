@@ -16,250 +16,155 @@ namespace IO.Milvus.Param.Collection
         #endregion
 
         #region Ctor
-        public FieldType([NotNull] Builder builder)
+        public FieldType()
         {
-            this.Name = builder.name;
-            this.IsPrimaryKey = builder.isPrimaryKey;
-            this.Description = builder.description;
-            this.DataType = builder.dataType;
-            this.TypeParams = builder.typeParams;
-            this.IsAutoID = builder.isAutoID;
+            
+        }
+
+        public static FieldType Create(
+            string name,
+            DataType dataType,
+            Dictionary<string,string> typeParams = null,
+            bool isPrimaryLey = false,
+            bool isAutoID = false)
+        {
+            var field = new FieldType()
+            {
+                Name = name,
+                DataType = dataType,
+                IsAutoID = isAutoID,
+                IsPrimaryKey = isPrimaryLey
+            };
+
+            if (typeParams != null)
+            {
+                foreach (var typeParam in typeParams)
+                {
+                    field.TypeParams[typeParam.Key] = typeParam.Value;
+                }
+            }
+            field.Check();
+
+            return field;
+        }
+
+        public static FieldType Create(
+            string name,
+            string description,
+            DataType dataType,
+            int dimension,
+            int maxLength,
+            Dictionary<string, string> typeParams,
+            bool isPrimaryLey = false,
+            bool isAutoID = false)
+        {
+            var field = new FieldType()
+            {
+                Name = name,
+                Description = description,
+                DataType = dataType,
+                Dimension = dimension,
+                MaxLength = maxLength,
+                IsAutoID = isAutoID,
+                IsPrimaryKey = isPrimaryLey
+            };
+
+            if (typeParams != null)
+            {
+                foreach (var typeParam in typeParams)
+                {
+                    field.TypeParams[typeParam.Key] = typeParam.Value;
+                }
+            }
+            field.Check();
+
+            return field;
         }
         #endregion
 
         #region Properties
-        public int Dimension { get; }
+        public int Dimension { get; set; }
 
-        public int MaxLength { get; }
+        public int MaxLength { get; set; }
 
-        public string Description { get; }
+        public string Description { get; set; } = "";
 
-        public bool IsPrimaryKey { get; }
+        public bool IsPrimaryKey { get; set; } = false;
 
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public DataType DataType { get; }
+        public DataType DataType { get; set; }
 
-        public Dictionary<string, string> TypeParams { get; }
+        public Dictionary<string, string> TypeParams { get; } = new Dictionary<string, string>();
 
-        public bool IsAutoID { get; }
+        public bool IsAutoID { get; set; } = false;
         #endregion
 
-        public static Builder NewBuilder()
+        internal void Check()
         {
-            return new Builder();
-        }
+            ParamUtils.CheckNullEmptyString(Name, "Field name");
 
-        /// <summary>
-        /// Builder for <see cref="FieldType"/> class.
-        /// </summary>
-        public sealed class Builder
-        {
-            internal string name;
-            internal bool isPrimaryKey = false;
-            internal string description = "";
-            internal DataType dataType;
-            internal Dictionary<string, string> typeParams = new Dictionary<string, string>();
-            internal bool isAutoID = false;
-
-            internal Builder()
+            if (DataType == DataType.None)
             {
+                throw new ParamException("Field data type is illegal");
             }
 
-            public Builder WithName([NotNull] string name)
-            {
-                this.name = name ?? throw new ArgumentNullException(nameof(name));
-                return this;
-            }
+            //TODO: Need Check
+            //if (dataType == DataType.String)
+            //{
+            //    throw new ParamException("String type is not supported, use VarChar instead");
+            //}
 
-            /// <summary>
-            ///  Sets the field as the primary key field.
-            ///  Note that the current release of Milvus only support<code> Long</code> data type as primary key.
-            /// </summary>
-            /// <param name="primaryKey">true is primary key, false is not</param>
-            /// <returns><see cref="Builder"/></returns>
-            public Builder WithIsPrimaryKey(bool primaryKey)
+            if (DataType == DataType.FloatVector || DataType == DataType.BinaryVector)
             {
-                this.isPrimaryKey = primaryKey;
-                return this;
-            }
-
-            /// <summary>
-            /// Sets the field description. The description can be empty. The default is "".
-            /// </summary>
-            /// <param name="description">description of the field</param>
-            /// <returns><see cref="Builder"/></returns>
-            /// <exception cref="ArgumentNullException"></exception>
-            public Builder WithDescription([NotNull] string description)
-            {
-                this.description = description ?? throw new ArgumentNullException(nameof(description));
-                return this;
-            }
-
-            /// <summary>
-            /// Sets the data type for the field.
-            /// </summary>
-            /// <param name="dataType">data type of the field</param>
-            /// <returns><see cref="Builder"/></returns>
-            public Builder WithDataType([NotNull] DataType dataType)
-            {
-                this.dataType = dataType;
-                return this;
-            }
-
-            /// <summary>
-            /// Adds a parameter pair for the field.
-            /// </summary>
-            /// <param name="key">parameter key</param>
-            /// <param name="value">parameter value</param>
-            /// <returns><see cref="Builder"/></returns>
-            /// <exception cref="ParamException"></exception>
-            public Builder AddTypeParam([NotNull] string key, [NotNull] string value)
-            {
-                if (string.IsNullOrEmpty(key))
+                if (!TypeParams.ContainsKey(Constant.VECTOR_DIM))
                 {
-                    throw new ArgumentException($"“{nameof(key)}”Cannot be null or empty.", nameof(key));
+                    throw new ParamException("Vector field dimension must be specified");
                 }
 
-                if (string.IsNullOrEmpty(value))
+                try
                 {
-                    throw new ArgumentException($"“{nameof(value)}”Cannot be null or empty.", nameof(value));
-                }
-
-                typeParams.Add(key, value);
-                return this;
-            }
-
-            /// <summary>
-            /// Sets more parameters for the field.
-            /// </summary>
-            /// <param name="typeParams">parameters of the field</param>
-            /// <returns><see cref="Builder"/></returns>
-            /// <exception cref="ArgumentNullException"></exception>
-            public Builder WithTypeParams([NotNull] Dictionary<string, string> typeParams)
-            {
-                if (typeParams is null)
-                {
-                    throw new ArgumentNullException(nameof(typeParams));
-                }
-
-                foreach (var typeParam in typeParams)
-                {
-                    this.typeParams[typeParam.Key] = typeParam.Value;
-                }
-                return this;
-            }
-
-            /// <summary>
-            ///  Sets the dimension of a vector field. Dimension value must be greater than zero.
-            /// </summary>
-            /// <param name="dimension">dimension of the field</param>
-            /// <returns><see cref="Builder"/></returns>
-            public Builder WithDimension([NotNull] int dimension)
-            {
-                this.typeParams.Add(Constant.VECTOR_DIM, dimension.ToString());
-                return this;
-            }
-
-            /// <summary>
-            /// Sets the max length of a varchar field. The value must be greater than zero.
-            /// </summary>
-            /// <param name="maxLength">max length of a varchar field</param>
-            /// <returns><see cref="Builder"/></returns>
-            public Builder WithMaxLength([NotNull] int maxLength)
-            {
-                this.typeParams.Add(Constant.VARCHAR_MAX_LENGTH, maxLength.ToString());
-                return this;
-            }
-
-            /// <summary>
-            /// Enables auto-id function for the field. Note that the auto-id function can only be enabled on primary key field.
-            /// If auto-id function is enabled, Milvus will automatically generate unique ID for each entity,
-            /// thus you do not need to provide values for the primary key field when inserting.
-            ///
-            /// If auto-id is disabled, you need to provide values for the primary key field when inserting.
-            /// </summary>
-            /// <param name="autoID">true enable auto-id, false disable auto-id</param>
-            /// <returns><see cref="Builder"/></returns>
-            public Builder WithIsAutoID(bool autoID)
-            {
-                this.isAutoID = autoID;
-                return this;
-            }
-
-            /// <summary>
-            ///  Verifies parameters and creates a new <see cref="FieldType"/> instance.
-            /// </summary>
-            /// <returns><see cref="FieldType"/></returns>
-            /// <exception cref="ParamException"></exception>
-            public FieldType Build()
-            {
-                ParamUtils.CheckNullEmptyString(name, "Field name");
-
-                if (dataType == DataType.None)
-                {
-                    throw new ParamException("Field data type is illegal");
-                }
-
-                //TODO: Need Check
-                //if (dataType == DataType.String)
-                //{
-                //    throw new ParamException("String type is not supported, use VarChar instead");
-                //}
-
-                if (dataType == DataType.FloatVector || dataType == DataType.BinaryVector)
-                {
-                    if (!typeParams.ContainsKey(Constant.VECTOR_DIM))
+                    int dim = int.Parse(TypeParams[Constant.VECTOR_DIM]);
+                    if (dim <= 0)
                     {
-                        throw new ParamException("Vector field dimension must be specified");
-                    }
-
-                    try
-                    {
-                        int dim = int.Parse(typeParams[Constant.VECTOR_DIM]);
-                        if (dim <= 0)
-                        {
-                            throw new ParamException("Vector field dimension must be larger than zero");
-                        }
-                    }
-                    catch (FormatException)
-                    {
-                        throw new ParamException("Vector field dimension must be an integer number");
+                        throw new ParamException("Vector field dimension must be larger than zero");
                     }
                 }
-
-                if (dataType == DataType.String)
+                catch (FormatException)
                 {
-                    if (!typeParams.ContainsKey(Constant.VARCHAR_MAX_LENGTH))
-                    {
-                        throw new ParamException("Varchar field max length must be specified");
-                    }
+                    throw new ParamException("Vector field dimension must be an integer number");
+                }
+            }
 
-                    try
-                    {
-                        int len = int.Parse(typeParams[Constant.VARCHAR_MAX_LENGTH]);
-                        if (len <= 0)
-                        {
-                            throw new ParamException("Varchar field max length must be larger than zero");
-                        }
-                    }
-                    catch (FormatException)
-                    {
-                        throw new ParamException("Varchar field max length must be an integer number");
-                    }
+            if (DataType == DataType.String)
+            {
+                if (!TypeParams.ContainsKey(Constant.VARCHAR_MAX_LENGTH))
+                {
+                    throw new ParamException("Varchar field max length must be specified");
                 }
 
-                return new FieldType(this);
+                try
+                {
+                    int len = int.Parse(TypeParams[Constant.VARCHAR_MAX_LENGTH]);
+                    if (len <= 0)
+                    {
+                        throw new ParamException("Varchar field max length must be larger than zero");
+                    }
+                }
+                catch (FormatException)
+                {
+                    throw new ParamException("Varchar field max length must be an integer number");
+                }
             }
         }
-
+    
         /// <summary>
         /// Construct a <code>string</code> by <see cref="FieldType"/> instance.
         /// </summary>
         /// <returns><see cref="string"/></returns>
         public override string ToString()
         {
-            return $"FieldType{{name={Name}\', type={DataType}\', primaryKey={IsPrimaryKey}, autoID={IsAutoID}, params={TypeParams}}}";
+            return $"FieldType{{{nameof(Name)}={Name}\', {nameof(DataType)}={DataType}\', {nameof(IsPrimaryKey)}={IsPrimaryKey}, {nameof(IsAutoID)}={IsAutoID}, {nameof(TypeParams)}={TypeParams}}}";
         }
     }
 }

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace IO.Milvus.Client
 {
-    public class MilvusMultiServiceClient : IMilvusClient
+    public class MilvusMultiServiceClient 
     {
         public R<RpcStatus> AlterAlias(AlterAliasParam requestParam)
         {
@@ -84,6 +84,11 @@ namespace IO.Milvus.Client
             throw new NotImplementedException();
         }
 
+        public R<RpcStatus> DropCollection(string collectionName)
+        {
+            throw new NotImplementedException();
+        }
+
         public R<RpcStatus> DropIndex(DropIndexParam requestParam)
         {
             throw new NotImplementedException();
@@ -145,6 +150,11 @@ namespace IO.Milvus.Client
         }
 
         public R<bool> HasCollection(HasCollectionParam hasCollectionParam)
+        {
+            throw new NotImplementedException();
+        }
+
+        public R<bool> HasCollection(string collectionName)
         {
             throw new NotImplementedException();
         }

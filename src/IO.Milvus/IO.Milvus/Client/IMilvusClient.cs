@@ -123,6 +123,13 @@ namespace IO.Milvus.Client
         R<RpcStatus> UpdateCredential(UpdateCredentialParam requestParam);
 
         R<RpcStatus> DeleteCredential(DeleteCredentialParam requestParam);
+        R<bool> HasCollection(string collectionName);
+
+        R<RpcStatus> DropCollection(string collectionName);
+        R<DescribeCollectionResponse> DescribeCollection(string collectionName);
+        R<RpcStatus> ReleaseCollection(string collectionName);
+        Task<R<RpcStatus>> LoadCollectionAsync(string collectionName);
+        R<RpcStatus> LoadCollection(string collectionName);
 
         //R<ListCredUsersResponse> listCredUsers(ListCredUsersParam requestParam);
 
