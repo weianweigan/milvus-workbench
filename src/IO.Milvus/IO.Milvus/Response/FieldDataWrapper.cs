@@ -16,7 +16,7 @@ namespace IO.Milvus.Response
     {
         private FieldData fieldData;
 
-        public FieldDataWrapper([NotNull] FieldData fieldData)
+        public FieldDataWrapper(FieldData fieldData)
         {
             this.fieldData = fieldData;
         }

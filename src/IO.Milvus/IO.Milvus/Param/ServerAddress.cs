@@ -23,7 +23,7 @@ namespace IO.Milvus.Param
         #endregion
 
         #region Ctor
-        private ServerAddress([NotNull] Builder builder)
+        private ServerAddress(Builder builder)
         {
             Host = builder.host;
             Port = builder.port;
@@ -44,7 +44,7 @@ namespace IO.Milvus.Param
 
             internal Builder() { }
 
-            public Builder WithHost([NotNull] string host)
+            public Builder WithHost(string host)
             {
                 this.host = host;
                 return this;
@@ -90,7 +90,7 @@ namespace IO.Milvus.Param
             return x.Port == y.Port && x.Host == y.Host;
         }
 
-        public int GetHashCode([DisallowNull] ServerAddress obj)
+        public int GetHashCode(ServerAddress obj)
         {
             return new HashCodeBuilder()
                 .Add(Host)

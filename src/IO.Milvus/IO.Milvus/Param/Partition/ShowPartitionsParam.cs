@@ -41,9 +41,9 @@ namespace IO.Milvus.Param.Partition
 
             if (!PartitionNames.IsEmpty())
             {
-                foreach (var collectionName in PartitionNames)
+                foreach (var partitionName in PartitionNames)
                 {
-                    ParamUtils.CheckNullEmptyString(collectionName, $"{nameof(PartitionNames)}'s {nameof(collectionName)} in {nameof(CollectionNames)}");
+                    ParamUtils.CheckNullEmptyString(partitionName, $"{nameof(PartitionNames)}'s {nameof(partitionName)} in {nameof(partitionName)}");
                 }
                 ShowType = ShowType.InMemory;
             }

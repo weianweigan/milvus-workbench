@@ -34,7 +34,11 @@ namespace IO.Milvus.Client
         #region Public Methods
         public bool ClientIsReady()
         {
+#if NET48
+            return true;
+#else
             return channel.State != ConnectivityState.Shutdown;
+#endif
         }
 
         public void Close()
@@ -100,7 +104,7 @@ namespace IO.Milvus.Client
         #region Api Methods
 
         #region Collection
-        public R<ShowCollectionsResponse> ShowCollections([NotNull] ShowCollectionsParam requestParam)
+        public R<ShowCollectionsResponse> ShowCollections(ShowCollectionsParam requestParam)
         {
             if (!ClientIsReady())
             {
@@ -133,7 +137,7 @@ namespace IO.Milvus.Client
             }
         }
 
-        public R<RpcStatus> CreateCollection([NotNull] CreateCollectionParam requestParam)
+        public R<RpcStatus> CreateCollection(CreateCollectionParam requestParam)
         {
             requestParam.Check();
             if (!ClientIsReady())
@@ -197,13 +201,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> DropCollection([NotNull]DropCollectionParam requestParam)
+        public R<RpcStatus> DropCollection(DropCollectionParam requestParam)
         {
             return DropCollection(requestParam.CollectionName);
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> DropCollection([NotNull]string collectionName)
+        public R<RpcStatus> DropCollection(string collectionName)
         {
             if (!ClientIsReady())
             {
@@ -236,12 +240,12 @@ namespace IO.Milvus.Client
             }
         }
 
-        public R<bool> HasCollection([NotNull]HasCollectionParam hasCollectionParam)
+        public R<bool> HasCollection(HasCollectionParam hasCollectionParam)
         {
             return HasCollection(hasCollectionParam.CollectionName);
         }
 
-        public R<bool> HasCollection([NotNull]string collectionName)
+        public R<bool> HasCollection(string collectionName)
         {
             if (!ClientIsReady())
             {

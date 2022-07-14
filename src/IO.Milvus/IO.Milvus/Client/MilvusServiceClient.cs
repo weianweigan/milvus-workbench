@@ -7,6 +7,12 @@ using System;
 
 namespace IO.Milvus.Client
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>
+    /// <see href="https://docs.microsoft.com/zh-cn/aspnet/core/grpc/?view=aspnetcore-6.0"/>
+    /// </remarks>
     public class MilvusServiceClient:AbstractMilvusGrpcClient
     {
         public MilvusServiceClient(ConnectParam connectParam)

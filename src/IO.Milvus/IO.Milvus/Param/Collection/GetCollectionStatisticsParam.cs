@@ -7,7 +7,6 @@ namespace IO.Milvus.Param.Collection
         /// <summary>
         /// Collection name cannot be empty or null.
         /// </summary>
-        [NotNull]
         public string CollectionName { get; set; }
 
         /// <summary>
@@ -15,8 +14,7 @@ namespace IO.Milvus.Param.Collection
         /// </summary>
         public bool IsFlushCollection { get; set; } = true;
 
-        public static GetCollectionStatisticsParam Create(
-            [NotNull]string collectionName,
+        public static GetCollectionStatisticsParam Create(string collectionName,
             bool isFlushCollection = true)
         {
             var param = new GetCollectionStatisticsParam()

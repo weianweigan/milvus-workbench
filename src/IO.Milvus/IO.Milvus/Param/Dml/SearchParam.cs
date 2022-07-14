@@ -24,7 +24,7 @@ namespace IO.Milvus.Param.Dml
         internal long gracefulTime;
         internal ConsistencyLevelEnum consistencyLevel;
 
-        private SearchParam([NotNull] Builder builder)
+        private SearchParam(Builder builder)
         {
             this.collectionName = builder.collectionName;
             this.partitionNames = builder.partitionNames;
@@ -68,13 +68,13 @@ namespace IO.Milvus.Param.Dml
             {
             }
                                      
-            public Builder WithCollectionName([NotNull] string collectionName)
+            public Builder WithCollectionName(string collectionName)
             {
                 this.collectionName = collectionName;
                 return this;
             }
 
-            public Builder WithPartitionNames([NotNull] List<string> partitionNames)
+            public Builder WithPartitionNames(List<string> partitionNames)
             {
                 foreach (var name in partitionNames)
                 {
@@ -98,7 +98,7 @@ namespace IO.Milvus.Param.Dml
             }
 
 
-            public Builder AddPartitionName([NotNull] string partitionName)
+            public Builder AddPartitionName(string partitionName)
             {
                 if (!this.partitionNames.Contains(partitionName))
                 {
@@ -107,35 +107,35 @@ namespace IO.Milvus.Param.Dml
                 return this;
             }
 
-            public Builder WithMetricType([NotNull] MetricType metricType)
+            public Builder WithMetricType(MetricType metricType)
             {
                 this.metricType = metricType;
                 return this;
             }
 
 
-            public Builder WithVectorFieldName([NotNull] string vectorFieldName)
+            public Builder WithVectorFieldName(string vectorFieldName)
             {
                 this.vectorFieldName = vectorFieldName;
                 return this;
             }
 
 
-            public Builder WithTopK([NotNull] int topK)
+            public Builder WithTopK(int topK)
             {
                 this.topK = topK;
                 return this;
             }
 
             
-            public Builder withExpr([NotNull] string expr)
+            public Builder withExpr(string expr)
             {
                 this.expr = expr;
                 return this;
             }
 
   
-            public Builder withOutFields([NotNull] List<string> outFields)
+            public Builder withOutFields(List<string> outFields)
             {
                 foreach (var outField in outFields)
                 {
@@ -145,7 +145,7 @@ namespace IO.Milvus.Param.Dml
             }
 
 
-            public Builder AddOutField([NotNull] string fieldName)
+            public Builder AddOutField(string fieldName)
             {
                 if (!this.outFields.Contains(fieldName))
                 {
@@ -155,31 +155,31 @@ namespace IO.Milvus.Param.Dml
             }
 
 
-            public Builder WithVectors([NotNull] List<TVector> vectors)
+            public Builder WithVectors(List<TVector> vectors)
             {
                 this.vectors = vectors;
                 return this;
             }
 
-            public Builder WithRoundDecimal([NotNull] int @decimal)
+            public Builder WithRoundDecimal(int @decimal)
             {
                 this.roundDecimal = @decimal;
                 return this;
             }
 
-            public Builder WithParams([NotNull] string @params)
+            public Builder WithParams(string @params)
             {
                 this.@params = @params;
                 return this;
             }
 
-            public Builder WithTravelTimestamp([NotNull] long ts)
+            public Builder WithTravelTimestamp(long ts)
             {
                 this.travelTimestamp = ts;
                 return this;
             }
 
-            public Builder WithGuaranteeTimestamp([NotNull] long ts)
+            public Builder WithGuaranteeTimestamp(long ts)
             {
                 this.guaranteeTimestamp = ts;
                 return this;

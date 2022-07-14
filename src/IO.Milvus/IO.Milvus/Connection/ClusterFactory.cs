@@ -13,7 +13,7 @@ namespace IO.Milvus.Connection
     {
         private ServerMonitor<TVector> monitor;
 
-        private ClusterFactory([NotNull] Builder builder)
+        private ClusterFactory(Builder builder)
         {
             this.ServerSettings = builder.serverSettings;
             this.Master = this.DefaultServer;
@@ -85,7 +85,7 @@ namespace IO.Milvus.Connection
             {
             }
 
-            public Builder WithServerSetting([NotNull] List<ServerSetting> serverSettings)
+            public Builder WithServerSetting(List<ServerSetting> serverSettings)
             {
                 this.serverSettings = serverSettings;
                 return this;

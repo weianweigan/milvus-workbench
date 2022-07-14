@@ -40,7 +40,7 @@ namespace IO.Milvus.Param.Alias
             /// </summary>
             /// <param name="alias"></param>
             /// <returns></returns>
-            public Builder withAlias([NotNull] string alias)
+            public Builder withAlias(string alias)
             {
                 this.alias = alias;
                 return this;

@@ -15,7 +15,7 @@ namespace IO.Milvus.Param
     public class QueryNodeSingleSearch<TVector>
     {
         #region Ctor
-        private QueryNodeSingleSearch([NotNull] Builder builder)
+        private QueryNodeSingleSearch(Builder builder)
         {
             CollectionName = builder.collectionName;
             MetricType = builder.metricType;
@@ -60,7 +60,7 @@ namespace IO.Milvus.Param
             /// </summary>
             /// <param name="collectionName">collection name</param>
             /// <returns><code>Builder</code></returns>
-            public Builder WithCollectionName([NotNull] string collectionName)
+            public Builder WithCollectionName(string collectionName)
             {
                 this.collectionName = collectionName;
                 return this;
@@ -71,7 +71,7 @@ namespace IO.Milvus.Param
             /// </summary>
             /// <param name="metricType">metric type</param>
             /// <returns><code>Builder</code></returns>
-            public Builder WithMetricType([NotNull] MetricType metricType)
+            public Builder WithMetricType(MetricType metricType)
             {
                 this.metricType = metricType;
                 return this;
@@ -82,7 +82,7 @@ namespace IO.Milvus.Param
             /// </summary>
             /// <param name="vectorFieldName">vector field name</param>
             /// <returns></returns>
-            public Builder WithVectorFieldName([NotNull] string vectorFieldName)
+            public Builder WithVectorFieldName(string vectorFieldName)
             {
                 this.vectorFieldName = vectorFieldName;
                 return this;
@@ -97,7 +97,7 @@ namespace IO.Milvus.Param
             /// </summary>
             /// <param name="vectors"></param>
             /// <returns><code>Builder</code></returns>
-            public Builder WithVectors([NotNull] List<TVector> vectors)
+            public Builder WithVectors(List<TVector> vectors)
             {
                 this.vectors = vectors;
                 return this;
@@ -112,7 +112,7 @@ namespace IO.Milvus.Param
             /// </summary>
             /// <param name="params">extra parameters in json format</param>
             /// <returns></returns>
-            public Builder WithParams([NotNull] string @params)
+            public Builder WithParams(string @params)
             {
                 this.@params = @params;
                 return this;

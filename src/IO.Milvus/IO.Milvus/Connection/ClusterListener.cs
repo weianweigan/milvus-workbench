@@ -60,7 +60,7 @@ namespace IO.Milvus.Connection
 
             var httpMsg = new HttpRequestMessage(HttpMethod.Get,url);
 
-            return OK_HTTP_CLIENT.Send(httpMsg);
+            return OK_HTTP_CLIENT.SendAsync(httpMsg).GetAwaiter().GetResult();
         }
         #endregion
     }

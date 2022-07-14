@@ -11,12 +11,12 @@ namespace IO.Milvus.Response
     {
         private SearchResultData results;
 
-        public SearchResultsWrapper([NotNull] SearchResultData results)
+        public SearchResultsWrapper(SearchResultData results)
         {
             this.results = results;
         }
 
-        public List<TFieldData> GetFieldData([NotNull] string fieldName, int indexOfTarget)
+        public List<TFieldData> GetFieldData(string fieldName, int indexOfTarget)
         {
             FieldDataWrapper wrapper = null;
             for (int i = 0; i < results.FieldsData.Count; ++i)

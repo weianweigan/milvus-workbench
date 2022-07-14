@@ -15,7 +15,7 @@ namespace IO.Milvus.Connection
 
         public IMilvusClient Client { get; }
 
-        public ServerSetting([NotNull] Builder builder)
+        public ServerSetting(Builder builder)
         {
             ServerAddress = builder.serverAddress;
             Client = builder.milvusClient;
@@ -34,7 +34,7 @@ namespace IO.Milvus.Connection
             /// <param name="serverAddress">ServerAddress host,port/server</param>
             /// <returns><code>Builder</code></returns>
             /// <exception cref="ArgumentNullException"></exception>
-            public Builder WithHost([NotNull] ServerAddress serverAddress)
+            public Builder WithHost(ServerAddress serverAddress)
             {
                 this.serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
                 return this;

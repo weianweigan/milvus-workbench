@@ -40,7 +40,7 @@ namespace IO.Milvus.Param.Alias
             /// </summary>
             /// <param name="collectionName">collection name</param>
             /// <returns></returns>
-            internal Builder WithCollectionName([NotNull] string collectionName)
+            internal Builder WithCollectionName(string collectionName)
             {
                 this.collectionName = collectionName;
                 return this;
@@ -51,7 +51,7 @@ namespace IO.Milvus.Param.Alias
             /// </summary>
             /// <param name="alias">alias of the collection</param>
             /// <returns></returns>
-            public Builder WithAlias([NotNull] string alias)
+            public Builder WithAlias(string alias)
             {
                 this.alias = alias;
                 return this;
