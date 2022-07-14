@@ -22,6 +22,16 @@ namespace IO.Milvus.Client.Tests
         }
 
         [TestMethod()]
+        [DataRow(DefaultTestCollectionName)]
+        public void HasCollectionErrorTest(string collectionName)
+        {
+            var milvusClient = DefaultClient().WithTimeout(TimeSpan.FromMilliseconds(5));
+            var r = milvusClient.HasCollection(collectionName);
+
+            Assert.IsTrue(r.Status == Status.Success,r.Exception?.ToString());
+        }
+
+        [TestMethod()]
         public void CreateCollectionTest()
         {
             var rd = new Random(DateTime.Now.Second);

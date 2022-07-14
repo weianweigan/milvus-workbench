@@ -45,6 +45,19 @@ namespace IO.Milvus.Client.Tests
             return client;
         }
 
+        public static MilvusServiceClient NewErrorClient()
+        {
+            var client = new MilvusServiceClient(
+                ConnectParam.Create(
+                    host: "192.168.100.139",
+                    port: 19531));
+
+            Assert.IsNotNull(client);
+            Assert.IsTrue(client.ClientIsReady());
+
+            return client;
+        }
+
         [TestMethod()]
         public void CloseTest()
         {

@@ -13,10 +13,11 @@ namespace IO.Milvus.Client
         {
             connectParam.Check();
 
-            metadata = new Metadata()
+            defaultCallOptions = new CallOptions();
+            defaultCallOptions.WithHeaders(new Metadata()
             {
                 {"authorization",connectParam.Authorization }
-            };            
+            });
 
             channel = GrpcChannel.ForAddress(connectParam.GetAddress());
             

@@ -14,8 +14,10 @@ using IO.Milvus.Param.Partition;
 using IO.Milvus.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace IO.Milvus.Client
@@ -25,7 +27,8 @@ namespace IO.Milvus.Client
         #region Fields
         protected GrpcChannel channel;
         protected MilvusService.MilvusServiceClient client;
-        protected Metadata metadata;
+        protected CallOptions defaultCallOptions;
+        private TimeSpan? defaultTimeOut;
         #endregion
 
         #region Public Methods
@@ -48,7 +51,9 @@ namespace IO.Milvus.Client
 
         public IMilvusClient WithTimeout(TimeSpan timeSpan)
         {
-            throw new NotImplementedException();
+            defaultTimeOut = timeSpan;
+
+            return this;
         }
         #endregion
 
@@ -68,6 +73,16 @@ namespace IO.Milvus.Client
                 }
             }
             return result;
+        }
+
+        private CallOptions WithInternalOptions()
+        {
+            if (defaultTimeOut != null)
+            {
+                var options = defaultCallOptions;
+                options.WithDeadline(DateTime.UtcNow.AddSeconds(defaultTimeOut.Value.TotalSeconds));
+            }
+            return defaultCallOptions;
         }
 
         private R<T> FailedStatus<T>(string requestName, IO.Milvus.Grpc.Status status)
@@ -101,7 +116,7 @@ namespace IO.Milvus.Client
                 };
                 requestParam.CollectionNames.AddRange(requestParam.CollectionNames);
 
-                var response = client.ShowCollections(request);
+                var response = client.ShowCollections(request,WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -164,7 +179,7 @@ namespace IO.Milvus.Client
                     Schema = schema.ToByteString()
                 };
 
-                var response = client.CreateCollection(request);
+                var response = client.CreateCollection(request,WithInternalOptions());
 
                 if (response.ErrorCode == ErrorCode.Success)
                 {
@@ -204,7 +219,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName,
                 };
 
-                var response = client.DropCollection(request);
+                var response = client.DropCollection(request,WithInternalOptions());
 
                 if (response.ErrorCode == ErrorCode.Success)
                 {
@@ -241,7 +256,8 @@ namespace IO.Milvus.Client
                 {
                     CollectionName = collectionName,
                 };
-                var response = client.HasCollection(hasCollectionRequest, metadata);
+
+                var response = client.HasCollection(hasCollectionRequest, WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -277,7 +293,7 @@ namespace IO.Milvus.Client
                 {
                     CollectionName = collectionName
                 };
-                var response = client.DescribeCollection(request, metadata);
+                var response = client.DescribeCollection(request, WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -358,7 +374,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName
                 };
 
-                var response = client.LoadCollection(request);
+                var response = client.LoadCollection(request,WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -394,7 +410,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName
                 };
 
-                var response = await client.LoadCollectionAsync(request);
+                var response = await client.LoadCollectionAsync(request,WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -430,7 +446,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName
                 };
 
-                var response = client.ReleaseCollection(request);
+                var response = client.ReleaseCollection(request,WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -466,7 +482,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName
                 };
 
-                var response = await client.ReleaseCollectionAsync(request);
+                var response = await client.ReleaseCollectionAsync(request,WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -486,40 +502,263 @@ namespace IO.Milvus.Client
         #region Partition
         public R<RpcStatus> CreatePartition(CreatePartitionParam requestParam)
         {
-            throw new NotImplementedException();
-        }
+            if (!ClientIsReady())
+            {
+                return R<RpcStatus>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
 
-        public R<RpcStatus> DeleteCredential(DeleteCredentialParam requestParam)
-        {
-            throw new NotImplementedException();
+            try
+            {
+                requestParam.Check();
+                var request = new CreatePartitionRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    PartitionName = requestParam.PartitionName,
+                };
+
+                var response = client.CreatePartition(request,WithInternalOptions());
+                if (response.ErrorCode == ErrorCode.Success)
+                {
+                    return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
+                }
+                else
+                {
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
+                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<RpcStatus>.Failed(e);
+            }
         }
 
         public R<RpcStatus> DropPartition(DropPartitionParam requestParam)
         {
-            throw new NotImplementedException();
-        }
+            if (!ClientIsReady())
+            {
+                return R<RpcStatus>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
 
-        public R<GetPartitionStatisticsResponse> GetPartitionStatistics(GetPartitionStatisticsParam requestParam)
-        {
-            throw new NotImplementedException();
+            try
+            {
+                requestParam.Check();
+                var request = new DropPartitionRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    PartitionName = requestParam.PartitionName,
+                };
+
+                var response = client.DropPartition(request, WithInternalOptions());
+                if (response.ErrorCode == ErrorCode.Success)
+                {
+                    return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
+                }
+                else
+                {
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
+                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<RpcStatus>.Failed(e);
+            }
         }
 
         public R<bool> HasPartition(HasPartitionParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<bool>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new HasPartitionRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    PartitionName = requestParam.PartitionName,
+                };
+
+                var response = client.HasPartition(request, WithInternalOptions());
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<bool>.Sucess(response.Value);
+                }
+                else
+                {
+                    return FailedStatus<bool>(nameof(LoadCollectionRequest),response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<bool>.Failed(e);
+            }
         }
 
         public R<RpcStatus> LoadPartitions(LoadPartitionsParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<RpcStatus>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new LoadPartitionsRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                };
+                request.PartitionNames.AddRange(requestParam.PartitionNames);
+
+                var response = client.LoadPartitions(request, WithInternalOptions());
+                if (response.ErrorCode == ErrorCode.Success)
+                {
+                    return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
+                }
+                else
+                {
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),new Grpc.Status() 
+                    { ErrorCode = response.ErrorCode,
+                        Reason = response.Reason});
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<RpcStatus>.Failed(e);
+            }
         }
         
         public R<RpcStatus> ReleasePartitions(ReleasePartitionsParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<RpcStatus>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new ReleasePartitionsRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                };
+                request.PartitionNames.AddRange(requestParam.PartitionNames);
+
+                var response = client.ReleasePartitions(request, WithInternalOptions());
+                if (response.ErrorCode == ErrorCode.Success)
+                {
+                    return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
+                }
+                else
+                {
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest), new Grpc.Status()
+                    {
+                        ErrorCode = response.ErrorCode,
+                        Reason = response.Reason
+                    });
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<RpcStatus>.Failed(e);
+            }
         }
         
+        public R<GetPartitionStatisticsResponse> GetPartitionStatistics(GetPartitionStatisticsParam requestParam)
+        {
+            if (!ClientIsReady())
+            {
+                return R<GetPartitionStatisticsResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+
+                if (requestParam.IsFulshCollection)
+                {
+                    var flushResponse = Flush(FlushParam.Create(requestParam.CollectionName));
+                    if (flushResponse.Status != Param.Status.Success)
+                    {
+                        return R<GetPartitionStatisticsResponse>.Failed((ErrorCode)flushResponse.Status,flushResponse.Exception);
+                    }
+                }
+                
+                var request = new GetPartitionStatisticsRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    PartitionName = requestParam.PartitionName
+                };
+
+                var response = client.GetPartitionStatistics(request, WithInternalOptions());
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<GetPartitionStatisticsResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<GetPartitionStatisticsResponse>(nameof(GetPartitionStatisticsRequest),response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<GetPartitionStatisticsResponse>.Failed(e);
+            }
+        }
+
         public R<ShowPartitionsResponse> ShowPartitions(ShowPartitionsParam requestParam)
+        {
+            if (!ClientIsReady())
+            {
+                return R<ShowPartitionsResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new ShowPartitionsRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    Type = requestParam.ShowType,
+                };
+                request.PartitionNames.Add(requestParam.PartitionNames);
+
+                var response = client.ShowPartitions(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<ShowPartitionsResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<ShowPartitionsResponse>(
+                        nameof(DescribeCollectionRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<ShowPartitionsResponse>.Failed(e);
+            }
+        }
+        #endregion
+
+        #region Alias
+        public R<RpcStatus> CreateAlias(CreateAliasParam requestParam)
+        {
+            throw new NotImplementedException();
+        }
+
+        public R<RpcStatus> AlterAlias(AlterAliasParam requestParam)
+        {
+            throw new NotImplementedException();
+        }
+
+        public R<RpcStatus> DropAlias(DropAliasParam requestParam)
         {
             throw new NotImplementedException();
         }
@@ -662,24 +901,12 @@ namespace IO.Milvus.Client
             throw new NotImplementedException();
         }
 
+        public R<RpcStatus> DeleteCredential(DeleteCredentialParam requestParam)
+        {
+            throw new NotImplementedException();
+        }
+
         public R<RpcStatus> UpdateCredential(UpdateCredentialParam requestParam)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
-
-        #region Alias
-        public R<RpcStatus> CreateAlias(CreateAliasParam requestParam)
-        {
-            throw new NotImplementedException();
-        }
-
-        public R<RpcStatus> AlterAlias(AlterAliasParam requestParam)
-        {
-            throw new NotImplementedException();
-        }
-
-        public R<RpcStatus> DropAlias(DropAliasParam requestParam)
         {
             throw new NotImplementedException();
         }
