@@ -34,7 +34,7 @@ namespace IO.Milvus.Client
         #region Public Methods
         public bool ClientIsReady()
         {
-#if NET48
+#if NET461_OR_GREATER
             return true;
 #else
             return channel.State != ConnectivityState.Shutdown;

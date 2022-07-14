@@ -1,7 +1,5 @@
-﻿using IO.Milvus.Client;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IO.Milvus.Param;
-using IO.Milvus.Param.Collection;
 
 namespace IO.Milvus.Client.Tests
 {

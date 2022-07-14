@@ -143,7 +143,7 @@ namespace IO.Milvus.Client.Tests
             Assert.IsTrue(r.Data.Msg == RpcStatus.SUCCESS_MSG);
         }
 
-        [TestMethod()]
+        //[TestMethod()]
         [DataRow(DefaultTestCollectionName)]
         public async Task LoadCollectionAsyncTestAsync(string collectionName)
         {
@@ -159,7 +159,7 @@ namespace IO.Milvus.Client.Tests
             Assert.IsTrue(r.Data.Msg == RpcStatus.SUCCESS_MSG);
         }
 
-        [TestMethod()]
+        //[TestMethod()]
         [DataRow(DefaultTestCollectionName)]
         public async Task LoadCollectionAsyncWithNameTestAsync(string collectionName)
         {
