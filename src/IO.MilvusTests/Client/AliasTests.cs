@@ -5,6 +5,14 @@ using IO.MilvusTests;
 
 namespace IO.Milvus.Client.Tests
 {
+    /// <summary>
+    /// unit test about alias
+    /// the tests must be executed in order of alphabet. A -> B -> C 
+    /// 
+    /// </summary>
+    /// <remarks>
+    /// <see cref="https://milvus.io/docs/v2.0.x/collection_alias.md"/>
+    /// </remarks>
     [TestClass]
     public class AliasTests : MilvusServiceClientTestsBase
     {

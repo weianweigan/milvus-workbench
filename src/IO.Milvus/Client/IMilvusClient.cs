@@ -261,6 +261,7 @@ namespace IO.Milvus.Client
         /// </summary>
         /// <param name="requestParam"></param>
         /// <returns></returns>
+        /// <remarks><see href="https://milvus.io/docs/v2.0.x/insert_data.md"/></remarks>
         R<MutationResult> Insert(InsertParam requestParam,CallOptions? callOptions = null);
 
         /// <summary>
