@@ -1,10 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using IO.Milvus.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IO.MilvusTests.Client.Base;
 using IO.Milvus.Param.Partition;
 using IO.MilvusTests;
