@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IO.Milvus.Param.Control
+﻿namespace IO.Milvus.Param.Control
 {
     public class GetCompactionPlansParam
     {
+        public static GetCompactionPlansParam Create(long compactionID)
+        {
+            return new GetCompactionPlansParam()
+            {
+                CompactionID = compactionID
+            };
+        }
+
+        public long CompactionID { get; set; }
     }
 }

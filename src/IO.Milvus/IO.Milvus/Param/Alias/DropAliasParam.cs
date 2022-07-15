@@ -7,56 +7,30 @@ namespace IO.Milvus.Param.Alias
     /// </summary>
     public class DropAliasParam
     {
-        #region Ctor
-        public DropAliasParam(Builder builder)
+        public static DropAliasParam Create(
+          string collectionName,
+          string alias)
         {
-            Alias = builder.alias;
-        }
-        #endregion
+            var param = new DropAliasParam()
+            {
+                CollectionName = collectionName,
+                Alias = alias
+            };
+            param.Check();
 
-        #region Propeties
-        public string Alias { get; }
-        #endregion
-
-        #region Builder
-        public static Builder NewBuilder()
-        {
-            return new Builder();
+            return param;
         }
 
-        /// <summary>
-        /// Builder for {@link DropAliasParam} class.
-        /// </summary>
-        public class Builder
-        {
-            internal string alias;
+        #region Properties
+        public string Alias { get; set; }
 
-            internal Builder()
-            {
-            }
-
-            /// <summary>
-            /// Sets collection alias. Collection alias cannot be empty or null.
-            /// </summary>
-            /// <param name="alias"></param>
-            /// <returns></returns>
-            public Builder withAlias(string alias)
-            {
-                this.alias = alias;
-                return this;
-            }
-
-            /// <summary>
-            /// Verifies parameters and creates a new {@link DropAliasParam} instance.
-            /// </summary>
-            /// <returns></returns>
-            public DropAliasParam build()
-            {
-                ParamUtils.CheckNullEmptyString(alias, "Alias");
-
-                return new DropAliasParam(this);
-            }
-        }
+        public string CollectionName { get; set; }
         #endregion
+
+        internal void Check()
+        {
+            ParamUtils.CheckNullEmptyString(CollectionName, "Collection name");
+            ParamUtils.CheckNullEmptyString(Alias, "Alias");
+        }
     }
 }

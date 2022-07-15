@@ -130,6 +130,11 @@ namespace IO.Milvus.Client
         R<RpcStatus> ReleaseCollection(string collectionName);
         Task<R<RpcStatus>> LoadCollectionAsync(string collectionName);
         R<RpcStatus> LoadCollection(string collectionName);
+        R<ManualCompactionResponse> ManualCompaction(string collectionName);
+        R<GetQuerySegmentInfoResponse> GetQuerySegmentInfo(string collectionName);
+        R<GetPersistentSegmentInfoResponse> GetPersistentSegmentInfo(string collectionName);
+        R<GetCompactionPlansResponse> GetCompactionStateWithPlans(long compactionID);
+        R<GetCompactionStateResponse> GetCompactionState(long compactionID);
 
         //R<ListCredUsersResponse> listCredUsers(ListCredUsersParam requestParam);
 

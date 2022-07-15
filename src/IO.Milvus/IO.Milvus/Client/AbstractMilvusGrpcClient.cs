@@ -104,6 +104,7 @@ namespace IO.Milvus.Client
         #region Api Methods
 
         #region Collection
+        ///<inheritdoc/>
         public R<ShowCollectionsResponse> ShowCollections(ShowCollectionsParam requestParam)
         {
             if (!ClientIsReady())
@@ -137,6 +138,7 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public R<RpcStatus> CreateCollection(CreateCollectionParam requestParam)
         {
             requestParam.Check();
@@ -240,11 +242,13 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public R<bool> HasCollection(HasCollectionParam hasCollectionParam)
         {
             return HasCollection(hasCollectionParam.CollectionName);
         }
 
+        ///<inheritdoc/>
         public R<bool> HasCollection(string collectionName)
         {
             if (!ClientIsReady())
@@ -278,11 +282,13 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public R<DescribeCollectionResponse> DescribeCollection(DescribeCollectionParam requestParam)
         {
             return DescribeCollection(requestParam.CollectionName);
         }
 
+        ///<inheritdoc/>
         public R<DescribeCollectionResponse> DescribeCollection(string collectionName)
         {
             if (!ClientIsReady())
@@ -316,6 +322,7 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public R<GetCollectionStatisticsResponse> GetCollectionStatistics(
             GetCollectionStatisticsParam requestParam)
         {
@@ -357,11 +364,13 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public R<RpcStatus> LoadCollection(LoadCollectionParam requestParam)
         {
             return LoadCollection(requestParam.CollectionName);
         }
 
+        ///<inheritdoc/>
         public R<RpcStatus> LoadCollection(string collectionName)
         {
             if (!ClientIsReady())
@@ -394,11 +403,13 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public async Task<R<RpcStatus>> LoadCollectionAsync(LoadCollectionParam requestParam)
         {
             return await LoadCollectionAsync(requestParam.CollectionName);
         }
 
+        ///<inheritdoc/>
         public async Task<R<RpcStatus>> LoadCollectionAsync(string collectionName)
         {
             if (!ClientIsReady())
@@ -430,11 +441,13 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public R<RpcStatus> ReleaseCollection(ReleaseCollectionParam requestParam)
         {
             return ReleaseCollection(requestParam.CollectionName);
         }
 
+        ///<inheritdoc/>
         public R<RpcStatus> ReleaseCollection(string collectionName)
         {
             if (!ClientIsReady())
@@ -466,11 +479,13 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public async Task<R<RpcStatus>> ReleaseCollectionAsync(ReleaseCollectionParam requestParam)
         {
             return await ReleaseCollectionAsync(requestParam.CollectionName);
         }
 
+        ///<inheritdoc/>
         public async Task<R<RpcStatus>> ReleaseCollectionAsync(string collectionName)
         {
             if (!ClientIsReady())
@@ -504,6 +519,7 @@ namespace IO.Milvus.Client
         #endregion
 
         #region Partition
+        ///<inheritdoc/>
         public R<RpcStatus> CreatePartition(CreatePartitionParam requestParam)
         {
             if (!ClientIsReady())
@@ -537,6 +553,7 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public R<RpcStatus> DropPartition(DropPartitionParam requestParam)
         {
             if (!ClientIsReady())
@@ -570,6 +587,7 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public R<bool> HasPartition(HasPartitionParam requestParam)
         {
             if (!ClientIsReady())
@@ -602,6 +620,7 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public R<RpcStatus> LoadPartitions(LoadPartitionsParam requestParam)
         {
             if (!ClientIsReady())
@@ -635,7 +654,8 @@ namespace IO.Milvus.Client
                 return R<RpcStatus>.Failed(e);
             }
         }
-        
+
+        ///<inheritdoc/>
         public R<RpcStatus> ReleasePartitions(ReleasePartitionsParam requestParam)
         {
             if (!ClientIsReady())
@@ -671,7 +691,8 @@ namespace IO.Milvus.Client
                 return R<RpcStatus>.Failed(e);
             }
         }
-        
+
+        ///<inheritdoc/>
         public R<GetPartitionStatisticsResponse> GetPartitionStatistics(GetPartitionStatisticsParam requestParam)
         {
             if (!ClientIsReady())
@@ -714,6 +735,7 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public R<ShowPartitionsResponse> ShowPartitions(ShowPartitionsParam requestParam)
         {
             if (!ClientIsReady())
@@ -752,38 +774,221 @@ namespace IO.Milvus.Client
         #endregion
 
         #region Alias
+        ///<inheritdoc/>
         public R<RpcStatus> CreateAlias(CreateAliasParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<RpcStatus>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new CreateAliasRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    Alias = requestParam.Alias,                    
+                };
+
+                var response = client.CreateAlias(request, WithInternalOptions());
+                if (response.ErrorCode == ErrorCode.Success)
+                {
+                    return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
+                }
+                else
+                {
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
+                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<RpcStatus>.Failed(e);
+            }
         }
 
+        ///<inheritdoc/>
         public R<RpcStatus> AlterAlias(AlterAliasParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<RpcStatus>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new AlterAliasRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    Alias = requestParam.Alias,
+                };
+
+                var response = client.AlterAlias(request, WithInternalOptions());
+                if (response.ErrorCode == ErrorCode.Success)
+                {
+                    return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
+                }
+                else
+                {
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
+                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<RpcStatus>.Failed(e);
+            }
         }
 
+        ///<inheritdoc/>
         public R<RpcStatus> DropAlias(DropAliasParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<RpcStatus>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new DropAliasRequest()
+                {                    
+                    Alias = requestParam.Alias,
+                };
+
+                var response = client.DropAlias(request, WithInternalOptions());
+                if (response.ErrorCode == ErrorCode.Success)
+                {
+                    return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
+                }
+                else
+                {
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
+                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<RpcStatus>.Failed(e);
+            }
         }
         #endregion
 
         #region Data
+        ///<inheritdoc/>
         public R<MutationResult> Insert(InsertParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<MutationResult>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new InsertRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    PartitionName = requestParam.PartitionName,
+                };
+                request.FieldsData.AddRange(requestParam.Fields);
+
+                var response = client.Insert(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<MutationResult>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<MutationResult>(
+                        nameof(MutationResult),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<MutationResult>.Failed(e);
+            }
         }
 
-        public Task<R<MutationResult>> InsertAsync(InsertParam requestParam)
+        ///<inheritdoc/>
+        public async Task<R<MutationResult>> InsertAsync(InsertParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<MutationResult>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new InsertRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    PartitionName = requestParam.PartitionName,
+                };
+                request.FieldsData.AddRange(requestParam.Fields);
+
+                var response = await client.InsertAsync(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<MutationResult>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<MutationResult>(
+                        nameof(MutationResult),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<MutationResult>.Failed(e);
+            }
         }
 
+        ///<inheritdoc/>
         public R<MutationResult> Delete(DeleteParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<MutationResult>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new DeleteRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    Expr = requestParam.Expr,
+                    PartitionName = requestParam.PartitionName,
+                };
+
+                var response = client.Delete(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<MutationResult>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<MutationResult>(
+                        nameof(DeleteRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<MutationResult>.Failed(e);
+            }
         }
 
+        ///<inheritdoc/>
         public R<FlushResponse> Flush(FlushParam requestParam)
         {
             if (!ClientIsReady())
@@ -814,6 +1019,7 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public async Task<R<FlushResponse>> FlushAsync(FlushParam requestParam)
         {
             if (!ClientIsReady())
@@ -844,72 +1050,398 @@ namespace IO.Milvus.Client
             }
         }
 
+        ///<inheritdoc/>
         public R<GetFlushStateResponse> GetFlushState(GetFlushStateParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<GetFlushStateResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+
+                var request = new GetFlushStateRequest();
+                request.SegmentIDs.AddRange(requestParam.SegmentIDs);
+
+                var response = client.GetFlushState(request);
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<GetFlushStateResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<GetFlushStateResponse>(nameof(GetFlushStateRequest), response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<GetFlushStateResponse>.Failed(e);
+            }
         }
         #endregion
 
         #region Index
+        ///<inheritdoc/>
         public R<RpcStatus> CreateIndex(CreateIndexParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<RpcStatus>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new CreateIndexRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    FieldName = requestParam.FieldName,
+                };
+                request.ExtraParams.AddRange(requestParam.ExtraDic.Select(p => new Grpc.KeyValuePair()
+                {
+                    Key = p.Key,
+                    Value = p.Value
+                }));
+
+                var response = client.CreateIndex(request, WithInternalOptions());
+                if (response.ErrorCode == ErrorCode.Success)
+                {
+                    return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
+                }
+                else
+                {
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
+                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<RpcStatus>.Failed(e);
+            }
         }
 
+        ///<inheritdoc/>
         public R<RpcStatus> DropIndex(DropIndexParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<RpcStatus>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new DropIndexRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    IndexName = requestParam.IndexName,
+                };
+
+                var response = client.DropIndex(request, WithInternalOptions());
+                if (response.ErrorCode == ErrorCode.Success)
+                {
+                    return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
+                }
+                else
+                {
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
+                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<RpcStatus>.Failed(e);
+            }
         }
 
+        ///<inheritdoc/>
         public R<DescribeIndexResponse> DescribeIndex(DescribeIndexParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<DescribeIndexResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+
+                var request = new DescribeIndexRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    IndexName = requestParam.IndexName,
+                };
+
+                var response = client.DescribeIndex(request);
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<DescribeIndexResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<DescribeIndexResponse>(nameof(DescribeIndexRequest), response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<DescribeIndexResponse>.Failed(e);
+            }
         }
 
+        ///<inheritdoc/>
         public R<GetIndexBuildProgressResponse> GetIndexBuildProgress(GetIndexBuildProgressParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<GetIndexBuildProgressResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+
+                var request = new GetIndexBuildProgressRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    IndexName = requestParam.IndexName,
+                };
+
+                var response = client.GetIndexBuildProgress(request);
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<GetIndexBuildProgressResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<GetIndexBuildProgressResponse>(nameof(GetIndexBuildProgressRequest), response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<GetIndexBuildProgressResponse>.Failed(e);
+            }
         }
         #endregion
 
         #region Search and Query
+        ///<inheritdoc/>
         public R<QueryResults> Query(QueryParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<QueryResults>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new QueryRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    Expr = requestParam.Expr,
+                    GuaranteeTimestamp = requestParam.GuaranteeTimestamp,
+                    TravelTimestamp = requestParam.TravelTimestamp,                    
+                };
+
+                request.OutputFields.AddRange(requestParam.OutFields);
+                request.PartitionNames.AddRange(requestParam.PartitionNames);
+
+                var response = client.Query(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<QueryResults>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<QueryResults>(
+                        nameof(QueryRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<QueryResults>.Failed(e);
+            }
         }
 
-        public Task<R<QueryResults>> QueryAsync(QueryParam requestParam)
+        ///<inheritdoc/>
+        public async Task<R<QueryResults>> QueryAsync(QueryParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<QueryResults>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new QueryRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    Expr = requestParam.Expr,
+                    GuaranteeTimestamp = requestParam.GuaranteeTimestamp,
+                    TravelTimestamp = requestParam.TravelTimestamp,
+                };
+
+                request.OutputFields.AddRange(requestParam.OutFields);
+                request.PartitionNames.AddRange(requestParam.PartitionNames);
+
+                var response = await client.QueryAsync(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<QueryResults>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<QueryResults>(
+                        nameof(QueryRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<QueryResults>.Failed(e);
+            }
         }
 
+        ///<inheritdoc/>
         public R<SearchResults> Search<TVector>(SearchParam<TVector> requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<SearchResults>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new SearchRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+                    
+                    GuaranteeTimestamp = requestParam.GuaranteeTimestamp,
+                    TravelTimestamp = requestParam.TravelTimestamp,
+                };
+
+                request.PartitionNames.AddRange(requestParam.PartitionNames);
+                request.OutputFields.AddRange(requestParam.OutFields);
+
+                var response = client.Search(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<SearchResults>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<SearchResults>(
+                        nameof(QueryRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<SearchResults>.Failed(e);
+            }
         }
 
-        public Task<R<SearchResults>> SearchAsync<TVector>(SearchParam<TVector> requestParam)
+        ///<inheritdoc/>
+        public async Task<R<SearchResults>> SearchAsync<TVector>(SearchParam<TVector> requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<SearchResults>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new SearchRequest()
+                {
+                    CollectionName = requestParam.CollectionName,
+
+                    GuaranteeTimestamp = requestParam.GuaranteeTimestamp,
+                    TravelTimestamp = requestParam.TravelTimestamp,
+                };
+
+                request.PartitionNames.AddRange(requestParam.PartitionNames);
+                request.OutputFields.AddRange(requestParam.OutFields);
+
+                var response = await client.SearchAsync(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<SearchResults>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<SearchResults>(
+                        nameof(QueryRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<SearchResults>.Failed(e);
+            }
         }
 
+        ///<inheritdoc/>
         public R<CalcDistanceResults> CalcDistance(CalcDistanceParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<CalcDistanceResults>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new CalcDistanceRequest();
+                //TODO add cal param
+                //request.OpLeft.DataArray = new VectorField()
+                //{
+                //    FloatVector =
+                //};
+
+                var response = client.CalcDistance(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<CalcDistanceResults>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<CalcDistanceResults>(
+                        nameof(CalcDistanceRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<CalcDistanceResults>.Failed(e);
+            }
         }
         #endregion
 
         #region Credential
+        [Obsolete]
         public R<RpcStatus> CreateCredential(CreateCredentialParam requestParam)
         {
             throw new NotImplementedException();
         }
 
+        [Obsolete]
         public R<RpcStatus> DeleteCredential(DeleteCredentialParam requestParam)
         {
             throw new NotImplementedException();
         }
 
+        [Obsolete]
         public R<RpcStatus> UpdateCredential(UpdateCredentialParam requestParam)
         {
             throw new NotImplementedException();
@@ -919,37 +1451,279 @@ namespace IO.Milvus.Client
         #region Others
         public R<GetCompactionStateResponse> GetCompactionState(GetCompactionStateParam requestParam)
         {
-            throw new NotImplementedException();
+            return GetCompactionState(requestParam.CompactionID);
         }
 
+        ///<inheritdoc/>
+        public R<GetCompactionStateResponse> GetCompactionState(long compactionID)
+        {
+            if (!ClientIsReady())
+            {
+                return R<GetCompactionStateResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                var request = new GetCompactionStateRequest()
+                {
+                    CompactionID = compactionID
+                };
+
+                var response = client.GetCompactionState(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<GetCompactionStateResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<GetCompactionStateResponse>(
+                        nameof(GetCompactionStateRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<GetCompactionStateResponse>.Failed(e);
+            }
+        }
+
+        ///<inheritdoc/>
         public R<GetCompactionPlansResponse> GetCompactionStateWithPlans(GetCompactionPlansParam requestParam)
         {
-            throw new NotImplementedException();
+            return GetCompactionStateWithPlans(requestParam.CompactionID);
         }
 
+        ///<inheritdoc/>
+        public R<GetCompactionPlansResponse> GetCompactionStateWithPlans(long compactionID)
+        {
+            if (!ClientIsReady())
+            {
+                return R<GetCompactionPlansResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                var request = new GetCompactionPlansRequest()
+                {
+                     CompactionID = compactionID
+                };
+
+                var response = client.GetCompactionStateWithPlans(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<GetCompactionPlansResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<GetCompactionPlansResponse>(
+                        nameof(GetCompactionStateRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<GetCompactionPlansResponse>.Failed(e);
+            }
+        }
+
+        ///<inheritdoc/>
         public R<GetMetricsResponse> GetMetrics(GetMetricsParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<GetMetricsResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                var request = new GetMetricsRequest()
+                {
+                    Request = requestParam.Request
+                };
+
+                var response = client.GetMetrics(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<GetMetricsResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<GetMetricsResponse>(
+                        nameof(GetCompactionStateRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<GetMetricsResponse>.Failed(e);
+            }
         }
 
+        ///<inheritdoc/>
         public R<GetPersistentSegmentInfoResponse> GetPersistentSegmentInfo(GetPersistentSegmentInfoParam requestParam)
         {
-            throw new NotImplementedException();
+            return GetPersistentSegmentInfo(requestParam.CollectionName);
         }
 
+        ///<inheritdoc/>
+        public R<GetPersistentSegmentInfoResponse> GetPersistentSegmentInfo(string collectionName)
+        {
+            if (!ClientIsReady())
+            {
+                return R<GetPersistentSegmentInfoResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                ParamUtils.CheckNullEmptyString(collectionName, nameof(collectionName));
+                var request = new GetPersistentSegmentInfoRequest()
+                {
+                    CollectionName = collectionName
+                };
+
+                var response = client.GetPersistentSegmentInfo(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<GetPersistentSegmentInfoResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<GetPersistentSegmentInfoResponse>(
+                        nameof(GetPersistentSegmentInfoRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<GetPersistentSegmentInfoResponse>.Failed(e);
+            }
+        }
+
+        ///<inheritdoc/>
         public R<GetQuerySegmentInfoResponse> GetQuerySegmentInfo(GetQuerySegmentInfoParam requestParam)
         {
-            throw new NotImplementedException();
+            return GetQuerySegmentInfo(requestParam.CollectionName);
         }
 
+        ///<inheritdoc/>
+        public R<GetQuerySegmentInfoResponse> GetQuerySegmentInfo(string collectionName)
+        {
+            if (!ClientIsReady())
+            {
+                return R<GetQuerySegmentInfoResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                ParamUtils.CheckNullEmptyString(collectionName, nameof(collectionName));
+                var request = new GetQuerySegmentInfoRequest()
+                {
+                    CollectionName = collectionName
+                };
+
+                var response = client.GetQuerySegmentInfo(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<GetQuerySegmentInfoResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<GetQuerySegmentInfoResponse>(
+                        nameof(GetQuerySegmentInfoRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<GetQuerySegmentInfoResponse>.Failed(e);
+            }
+        }
+
+        ///<inheritdoc/>
         public R<RpcStatus> LoadBalance(LoadBalanceParam requestParam)
         {
-            throw new NotImplementedException();
+            if (!ClientIsReady())
+            {
+                return R<RpcStatus>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                requestParam.Check();
+                var request = new LoadBalanceRequest()
+                {
+                    SrcNodeID = requestParam.SrcNodeID,
+                };
+                request.SealedSegmentIDs.AddRange(requestParam.SegmentIDs);
+                request.DstNodeIDs.AddRange(requestParam.DestNodeIDs);
+
+                var response = client.LoadBalance(request, WithInternalOptions());
+                if (response.ErrorCode == ErrorCode.Success)
+                {
+                    return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
+                }
+                else
+                {
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
+                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<RpcStatus>.Failed(e);
+            }
         }
 
+        ///<inheritdoc/>
         public R<ManualCompactionResponse> ManualCompaction(ManualCompactionParam requestParam)
         {
-            throw new NotImplementedException();
+            return ManualCompaction(requestParam.CollectionName);
+        }
+
+        ///<inheritdoc/>
+        public R<ManualCompactionResponse> ManualCompaction(string collectionName)
+        {
+            if (!ClientIsReady())
+            {
+                return R<ManualCompactionResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                ParamUtils.CheckNullEmptyString(collectionName, nameof(collectionName));
+                var describleCollectionResponse = DescribeCollection(collectionName);
+                if (describleCollectionResponse.Status != Param.Status.Success)
+                {
+                    return R<ManualCompactionResponse>.Failed((ErrorCode)describleCollectionResponse.Status, describleCollectionResponse.Exception);
+                }
+
+                var request = new ManualCompactionRequest()
+                {
+                    CollectionID = describleCollectionResponse.Data.CollectionID,
+                };
+
+                var response = client.ManualCompaction(request, WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<ManualCompactionResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<ManualCompactionResponse>(
+                        nameof(ManualCompactionRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<ManualCompactionResponse>.Failed(e);
+            }
         }
         #endregion
 

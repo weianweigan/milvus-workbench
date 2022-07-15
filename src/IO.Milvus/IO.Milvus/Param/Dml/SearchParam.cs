@@ -1,7 +1,8 @@
 ﻿using IO.Milvus.Common.ClientEnum;
 using IO.Milvus.Exception;
+using IO.Milvus.Grpc;
+using IO.Milvus.Utils;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -9,256 +10,171 @@ namespace IO.Milvus.Param.Dml
 {
     public class SearchParam<TVector>
     {
-        internal string collectionName;
-        internal List<string> partitionNames;
-        internal string metricType;
-        internal string vectorFieldName;
-        internal int topK;
-        internal string expr;
-        internal List<string> outFields;
-        internal List<TVector> vectors;
-        internal int roundDecimal;
-        internal string @params;
-        internal long travelTimestamp;
-        internal long guaranteeTimestamp;
-        internal long gracefulTime;
-        internal ConsistencyLevelEnum consistencyLevel;
-
-        private SearchParam(Builder builder)
+        public static SearchParam<TVector> Create(
+            string collectionName,
+            string vectorFieldName,
+            MetricType metricType,
+            List<TVector> vectors,
+            ConsistencyLevelEnum consistencyLevel,
+            List<string> outfields = null,
+            int topk = 0,
+            int roundDecimal = 1,
+            string param = "{}",
+            ulong travelTimestamp = 0L,
+            ulong guaranteeTimestamp = Constant.GUARANTEE_EVENTUALLY_TS,
+            ulong gracefulTime = 5000L
+            )
         {
-            this.collectionName = builder.collectionName;
-            this.partitionNames = builder.partitionNames;
-            this.metricType = builder.metricType.ToString();
-            this.vectorFieldName = builder.vectorFieldName;
-            this.topK = builder.topK;
-            this.expr = builder.expr;
-            this.outFields = builder.outFields;
-            this.vectors = builder.vectors;
-            this.roundDecimal = builder.roundDecimal;
-            this.@params = builder.@params;
-            this.travelTimestamp = builder.travelTimestamp;
-            this.guaranteeTimestamp = builder.guaranteeTimestamp;
-            this.gracefulTime = builder.gracefulTime;
-            this.consistencyLevel = builder.consistencyLevel;
+            var sparam = new SearchParam<TVector>()
+            {
+                CollectionName = collectionName,
+                VectorFieldName = vectorFieldName,
+                MetricType = metricType,
+                Vectors = vectors,
+                ConsistencyLevel = consistencyLevel,
+                OutFields = outfields,
+                TopK = topk,
+                RoundDecimal = roundDecimal,
+                TravelTimestamp = travelTimestamp,
+                GuaranteeTimestamp = guaranteeTimestamp,
+                GracefulTime = gracefulTime
+            };
+            sparam.Check();
+
+            return sparam;
         }
 
-        public static Builder NewBuilder()
+        public string CollectionName { get; set; }
+
+        public List<string> PartitionNames { get; set; } = new List<string>();
+
+        public MetricType MetricType { get; set; }
+
+        public string VectorFieldName { get; set; }
+
+        public int TopK { get; set; }
+
+        public string Expr { get; set; } = "";
+
+        public List<string> OutFields { get; set; } = new List<string>();
+
+        public List<TVector> Vectors { get; set; }
+
+        public int RoundDecimal { get; set; } = 1;
+
+        public string Params { get; set; } = "{}";
+
+        public ulong TravelTimestamp { get; set; } = 0L;
+
+        public ulong GuaranteeTimestamp { get; set; } = Constant.GUARANTEE_EVENTUALLY_TS;
+
+        public ulong GracefulTime { get; set; } = 5000L;
+
+        public ConsistencyLevelEnum ConsistencyLevel { get; set; }
+
+        internal void Check()
         {
-            return new Builder();
-        }
 
-        public class Builder
-        {
-            internal string collectionName;
-            internal List<string> partitionNames = new List<string>();
-            internal MetricType metricType = MetricType.L2;
-            internal string vectorFieldName;
-            internal int topK;
-            internal string expr = "";
-            internal List<string> outFields = new List<string>();
-            internal List<TVector> vectors;
-            internal int roundDecimal = -1;
-            internal string @params = "{}";
-            internal long travelTimestamp = 0L;
-            internal long guaranteeTimestamp = Constant.GUARANTEE_EVENTUALLY_TS;
-            internal long gracefulTime = 5000L;
-            internal ConsistencyLevelEnum consistencyLevel;
+            ParamUtils.CheckNullEmptyString(CollectionName, "Collection name");
+            ParamUtils.CheckNullEmptyString(VectorFieldName, "Target field name");
 
-            internal Builder()
+            if (TopK <= 0)
             {
-            }
-                                     
-            public Builder WithCollectionName(string collectionName)
-            {
-                this.collectionName = collectionName;
-                return this;
+                throw new ParamException("T opK value is illegal");
             }
 
-            public Builder WithPartitionNames(List<string> partitionNames)
+            if (TravelTimestamp < 0)
             {
-                foreach (var name in partitionNames)
+                throw new ParamException("The travel timestamp must be greater than 0");
+            }
+
+            if (GuaranteeTimestamp < 0)
+            {
+                throw new ParamException("The guarantee timestamp must be greater than 0");
+            }
+
+            if (MetricType == Param.MetricType.INVALID)
+            {
+                throw new ParamException("Metric type is invalid");
+            }
+
+            if (Vectors.IsEmpty())
+            {
+                throw new ParamException("Target vectors can not be empty");
+            }
+
+            if (typeof(TVector) == typeof(List<float>))
+            {
+                int dim = (Vectors.First() as List<float>).Count;
+                for (int i = 1; i < Vectors.Count; ++i)
                 {
-                    AddPartitionName(name);
-                }
-                return this;
-            }
-
-
-            public Builder WithConsistencyLevel(ConsistencyLevelEnum consistencyLevel)
-            {
-                this.consistencyLevel = consistencyLevel;
-                return this;
-            }
-
-
-            public Builder WithGracefulTime(long gracefulTime)
-            {
-                this.gracefulTime = gracefulTime;
-                return this;
-            }
-
-
-            public Builder AddPartitionName(string partitionName)
-            {
-                if (!this.partitionNames.Contains(partitionName))
-                {
-                    this.partitionNames.Add(partitionName);
-                }
-                return this;
-            }
-
-            public Builder WithMetricType(MetricType metricType)
-            {
-                this.metricType = metricType;
-                return this;
-            }
-
-
-            public Builder WithVectorFieldName(string vectorFieldName)
-            {
-                this.vectorFieldName = vectorFieldName;
-                return this;
-            }
-
-
-            public Builder WithTopK(int topK)
-            {
-                this.topK = topK;
-                return this;
-            }
-
-            
-            public Builder withExpr(string expr)
-            {
-                this.expr = expr;
-                return this;
-            }
-
-  
-            public Builder withOutFields(List<string> outFields)
-            {
-                foreach (var outField in outFields)
-                {
-                    outFields.Add(outField);
-                }
-                return this;
-            }
-
-
-            public Builder AddOutField(string fieldName)
-            {
-                if (!this.outFields.Contains(fieldName))
-                {
-                    this.outFields.Add(fieldName);
-                }
-                return this;
-            }
-
-
-            public Builder WithVectors(List<TVector> vectors)
-            {
-                this.vectors = vectors;
-                return this;
-            }
-
-            public Builder WithRoundDecimal(int @decimal)
-            {
-                this.roundDecimal = @decimal;
-                return this;
-            }
-
-            public Builder WithParams(string @params)
-            {
-                this.@params = @params;
-                return this;
-            }
-
-            public Builder WithTravelTimestamp(long ts)
-            {
-                this.travelTimestamp = ts;
-                return this;
-            }
-
-            public Builder WithGuaranteeTimestamp(long ts)
-            {
-                this.guaranteeTimestamp = ts;
-                return this;
-            }
-
-            public SearchParam<TVector> Build()
-            {
-                ParamUtils.CheckNullEmptyString(collectionName, "Collection name");
-                ParamUtils.CheckNullEmptyString(vectorFieldName, "Target field name");
-
-                if (topK <= 0)
-                {
-                    throw new ParamException("T opK value is illegal");
-                }
-
-                if (travelTimestamp < 0)
-                {
-                    throw new ParamException("The travel timestamp must be greater than 0");
-                }
-
-                if (guaranteeTimestamp < 0)
-                {
-                    throw new ParamException("The guarantee timestamp must be greater than 0");
-                }
-
-                if (metricType == MetricType.INVALID)
-                {
-                    throw new ParamException("Metric type is invalid");
-                }
-
-                if (vectors == null || vectors.Count == 0)
-                {
-                    throw new ParamException("Target vectors can not be empty");
-                }
-
-                if (typeof(TVector) == typeof(List<float>))
-                {
-                    int dim = (vectors.First() as List<float>).Count;
-                    for (int i = 1; i < vectors.Count; ++i)
+                    List<float> temp = Vectors[i] as List<float>;
+                    if (dim != temp.Count)
                     {
-                        List<float> temp = vectors[i] as List<float>;
-                        if (dim != temp.Count)
-                        {
-                            throw new ParamException("Target vector dimension must be equal");
-                        }
-                    }
-
-                    if (!ParamUtils.IsFloatMetric(metricType))
-                    {
-                        throw new ParamException("Target vector is float but metric type is incorrect");
+                        throw new ParamException("Target vector dimension must be equal");
                     }
                 }
-                else if (typeof(TVector) == typeof(MemoryStream))
-                {
-                    // binary vectors
-                    MemoryStream first = vectors[0] as MemoryStream;
-                    var dim = first.Position;
-                    for (int i = 1; i < vectors.Count; ++i)
-                    {
-                        MemoryStream temp = vectors[i] as MemoryStream;
-                        if (dim != temp.Position)
-                        {
-                            throw new ParamException("Target vector dimension must be equal");
-                        }
-                    }
 
-                    if (!ParamUtils.IsBinaryMetric(metricType))
+                if (!ParamUtils.IsFloatMetric(MetricType))
+                {
+                    throw new ParamException("Target vector is float but metric type is incorrect");
+                }
+            }
+            else if (typeof(TVector) == typeof(MemoryStream))
+            {
+                // binary vectors
+                MemoryStream first = Vectors[0] as MemoryStream;
+                var dim = first.Position;
+                for (int i = 1; i < Vectors.Count; ++i)
+                {
+                    MemoryStream temp = Vectors[i] as MemoryStream;
+                    if (dim != temp.Position)
                     {
-                        throw new ParamException("Target vector is binary but metric type is incorrect");
+                        throw new ParamException("Target vector dimension must be equal");
                     }
                 }
-                else
+
+                if (!ParamUtils.IsBinaryMetric(MetricType))
                 {
-                    throw new ParamException("Target vector type must be List<Float> or ByteBuffer");
+                    throw new ParamException("Target vector is binary but metric type is incorrect");
                 }
-                
-                return new SearchParam<TVector>(this);
+            }
+            else
+            {
+                throw new ParamException("Target vector type must be List<Float> or ByteBuffer");
             }
         }
 
+        internal SearchRequest ToRequset(bool check = false)
+        {
+            if (check)
+            {
+                Check();
+            }
+
+            var request = new SearchRequest()
+            {
+                CollectionName = CollectionName,
+                GuaranteeTimestamp = GuaranteeTimestamp,
+                TravelTimestamp = TravelTimestamp,
+            };
+
+            request.OutputFields.AddRange(OutFields);
+            request.PartitionNames.AddRange(PartitionNames);
+
+            //TODO add vectors
+            PlaceholderType plType = PlaceholderType.None;
+            foreach (var vector in Vectors)
+            {
+                if (typeof(TVector) == typeof(float))
+                {
+                    plType = PlaceholderType.FloatVector;
+
+                    
+                }
+            }
+
+            return request;
+        }
     }
 }
