@@ -8,17 +8,17 @@ namespace IO.MilvusTests.Client.Base
     {
         private static MilvusServiceClient _milvusclient;
 
-        protected MilvusServiceClient Milvusclient { get => _milvusclient ?? (_milvusclient = DefaultClient()); }
+        protected MilvusServiceClient MilvusClient { get => _milvusclient ?? (_milvusclient = DefaultClient()); }
 
         public MilvusServiceClient DefaultClient()
         {
             _milvusclient ??= new MilvusServiceClient(
                 HostConfig.ConnectParam);
 
-            Assert.IsNotNull(Milvusclient);
-            Assert.IsTrue(Milvusclient.ClientIsReady());
+            Assert.IsNotNull(MilvusClient);
+            Assert.IsTrue(MilvusClient.ClientIsReady());
 
-            return Milvusclient;
+            return MilvusClient;
         }
 
         public MilvusServiceClient NewClient()
