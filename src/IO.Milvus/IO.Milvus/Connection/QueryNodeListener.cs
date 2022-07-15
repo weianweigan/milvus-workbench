@@ -15,16 +15,26 @@ namespace IO.Milvus.Connection
 
         public QueryNodeListener(QueryNodeSingleSearch<TVector> singleSearch)
         {
-            searchParam = SearchParam<TVector>.NewBuilder()
-                .WithCollectionName(singleSearch.CollectionName)
-                .WithVectors(singleSearch.Vectors)
-                .WithVectorFieldName(singleSearch.VectorFieldName)
-                .WithParams(singleSearch.Params)
-                .WithMetricType(singleSearch.MetricType)
-                .WithTopK(5)
-                .WithRoundDecimal(-1)
-                .WithGuaranteeTimestamp(1L)
-                .Build();
+            searchParam = SearchParam<TVector>.Create(
+                collectionName: singleSearch.CollectionName,
+                vectorFieldName: singleSearch.VectorFieldName,
+                metricType: singleSearch.MetricType,
+                vectors: singleSearch.Vectors,
+                topk: 5,
+                roundDecimal: -1,
+                gracefulTime: 1L
+                );
+
+            //searchParam = SearchParam<TVector>.NewBuilder()
+            //    .WithCollectionName(singleSearch.CollectionName)
+            //    .WithVectors(singleSearch.Vectors)
+            //    .WithVectorFieldName(singleSearch.VectorFieldName)
+            //    .WithParams(singleSearch.Params)
+            //    .WithMetricType(singleSearch.MetricType)
+            //    .WithTopK(5)
+            //    .WithRoundDecimal(-1)
+            //    .WithGuaranteeTimestamp(1L)
+            //    .Build();
         }
 
         public bool HeartBeat(ServerSetting serverSetting)

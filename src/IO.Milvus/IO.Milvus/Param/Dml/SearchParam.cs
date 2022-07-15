@@ -15,7 +15,7 @@ namespace IO.Milvus.Param.Dml
             string vectorFieldName,
             MetricType metricType,
             List<TVector> vectors,
-            ConsistencyLevelEnum consistencyLevel,
+            ConsistencyLevelEnum consistencyLevel = ConsistencyLevelEnum.STRONG,
             List<string> outfields = null,
             int topk = 0,
             int roundDecimal = 1,
