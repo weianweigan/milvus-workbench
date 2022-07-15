@@ -25,6 +25,26 @@ namespace IO.Milvus.Param.Partition
                     param.PartitionNames.Add(partitionName);
                 }
             }
+            param.Check();
+
+            return param;
+        }
+
+        public static LoadPartitionsParam Create(
+            string collectionName,
+            string partitionName,
+            int replicalNumber = 0)
+        {
+            var param = new LoadPartitionsParam()
+            {
+                CollectionName = collectionName,
+                ReplicalNumber = replicalNumber,
+            };
+            if (!param.PartitionNames.Contains(partitionName))
+            {
+                param.PartitionNames.Add(partitionName);
+            }
+            param.Check();
 
             return param;
         }

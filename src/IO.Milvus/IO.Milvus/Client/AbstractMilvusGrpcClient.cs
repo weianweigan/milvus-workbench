@@ -394,7 +394,7 @@ namespace IO.Milvus.Client
                 }
                 else
                 {
-                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest), new Grpc.Status { ErrorCode = response.ErrorCode });
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest), response);
                 }
             }
             catch (System.Exception e)
@@ -432,7 +432,7 @@ namespace IO.Milvus.Client
                 }
                 else
                 {
-                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest), new Grpc.Status { ErrorCode = response.ErrorCode });
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest), response);
                 }
             }
             catch (System.Exception e)
@@ -470,7 +470,7 @@ namespace IO.Milvus.Client
                 }
                 else
                 {
-                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest), new Grpc.Status { ErrorCode = response.ErrorCode });
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest), response);
                 }
             }
             catch (System.Exception e)
@@ -508,7 +508,7 @@ namespace IO.Milvus.Client
                 }
                 else
                 {
-                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest), new Grpc.Status { ErrorCode = response.ErrorCode });
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest), response);
                 }
             }
             catch (System.Exception e)
@@ -543,8 +543,7 @@ namespace IO.Milvus.Client
                 }
                 else
                 {
-                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
-                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                    return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),response);
                 }
             }
             catch (System.Exception e)
@@ -578,7 +577,7 @@ namespace IO.Milvus.Client
                 else
                 {
                     return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
-                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                        response);
                 }
             }
             catch (System.Exception e)
@@ -799,7 +798,7 @@ namespace IO.Milvus.Client
                 else
                 {
                     return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
-                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                        response);
                 }
             }
             catch (System.Exception e)
@@ -833,7 +832,7 @@ namespace IO.Milvus.Client
                 else
                 {
                     return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
-                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                        response);
                 }
             }
             catch (System.Exception e)
@@ -866,7 +865,7 @@ namespace IO.Milvus.Client
                 else
                 {
                     return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
-                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                        response);
                 }
             }
             catch (System.Exception e)
@@ -1113,7 +1112,7 @@ namespace IO.Milvus.Client
                 else
                 {
                     return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
-                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                        response);
                 }
             }
             catch (System.Exception e)
@@ -1147,7 +1146,7 @@ namespace IO.Milvus.Client
                 else
                 {
                     return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
-                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                        response);
                 }
             }
             catch (System.Exception e)
@@ -1670,7 +1669,7 @@ namespace IO.Milvus.Client
                 else
                 {
                     return FailedStatus<RpcStatus>(nameof(LoadCollectionRequest),
-                        new Grpc.Status { ErrorCode = response.ErrorCode });
+                        response);
                 }
             }
             catch (System.Exception e)
