@@ -105,7 +105,7 @@ namespace IO.Milvus.Client
 
         #region Collection
         ///<inheritdoc/>
-        public R<ShowCollectionsResponse> ShowCollections(ShowCollectionsParam requestParam)
+        public R<ShowCollectionsResponse> ShowCollections(ShowCollectionsParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -121,7 +121,7 @@ namespace IO.Milvus.Client
                 };
                 requestParam.CollectionNames.AddRange(requestParam.CollectionNames);
 
-                var response = client.ShowCollections(request,WithInternalOptions());
+                var response = client.ShowCollections(request,callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -139,7 +139,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> CreateCollection(CreateCollectionParam requestParam)
+        public R<RpcStatus> CreateCollection(CreateCollectionParam requestParam, CallOptions? callOptions = null)
         {
             requestParam.Check();
             if (!ClientIsReady())
@@ -185,7 +185,7 @@ namespace IO.Milvus.Client
                     Schema = schema.ToByteString()
                 };
 
-                var response = client.CreateCollection(request,WithInternalOptions());
+                var response = client.CreateCollection(request,callOptions ?? WithInternalOptions());
 
                 if (response.ErrorCode == ErrorCode.Success)
                 {
@@ -203,13 +203,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> DropCollection(DropCollectionParam requestParam)
+        public R<RpcStatus> DropCollection(DropCollectionParam requestParam, CallOptions? callOptions = null)
         {
-            return DropCollection(requestParam.CollectionName);
+            return DropCollection(requestParam.CollectionName, callOptions);
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> DropCollection(string collectionName)
+        public R<RpcStatus> DropCollection(string collectionName, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -225,7 +225,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName,
                 };
 
-                var response = client.DropCollection(request,WithInternalOptions());
+                var response = client.DropCollection(request,callOptions ?? WithInternalOptions());
 
                 if (response.ErrorCode == ErrorCode.Success)
                 {
@@ -243,13 +243,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<bool> HasCollection(HasCollectionParam hasCollectionParam)
+        public R<bool> HasCollection(HasCollectionParam requestParam, CallOptions? callOptions = null)
         {
-            return HasCollection(hasCollectionParam.CollectionName);
+            return HasCollection(requestParam.CollectionName,callOptions);
         }
 
         ///<inheritdoc/>
-        public R<bool> HasCollection(string collectionName)
+        public R<bool> HasCollection(string collectionName, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -265,7 +265,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName,
                 };
 
-                var response = client.HasCollection(hasCollectionRequest, WithInternalOptions());
+                var response = client.HasCollection(hasCollectionRequest);
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -283,13 +283,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<DescribeCollectionResponse> DescribeCollection(DescribeCollectionParam requestParam)
+        public R<DescribeCollectionResponse> DescribeCollection(DescribeCollectionParam requestParam, CallOptions? callOptions = null)
         {
-            return DescribeCollection(requestParam.CollectionName);
+            return DescribeCollection(requestParam.CollectionName,callOptions);
         }
 
         ///<inheritdoc/>
-        public R<DescribeCollectionResponse> DescribeCollection(string collectionName)
+        public R<DescribeCollectionResponse> DescribeCollection(string collectionName, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -303,7 +303,7 @@ namespace IO.Milvus.Client
                 {
                     CollectionName = collectionName
                 };
-                var response = client.DescribeCollection(request, WithInternalOptions());
+                var response = client.DescribeCollection(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -324,7 +324,7 @@ namespace IO.Milvus.Client
 
         ///<inheritdoc/>
         public R<GetCollectionStatisticsResponse> GetCollectionStatistics(
-            GetCollectionStatisticsParam requestParam)
+            GetCollectionStatisticsParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -365,13 +365,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> LoadCollection(LoadCollectionParam requestParam)
+        public R<RpcStatus> LoadCollection(LoadCollectionParam requestParam, CallOptions? callOptions = null)
         {
-            return LoadCollection(requestParam.CollectionName);
+            return LoadCollection(requestParam.CollectionName,callOptions);
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> LoadCollection(string collectionName)
+        public R<RpcStatus> LoadCollection(string collectionName, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -387,7 +387,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName
                 };
 
-                var response = client.LoadCollection(request,WithInternalOptions());
+                var response = client.LoadCollection(request,callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -404,13 +404,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public async Task<R<RpcStatus>> LoadCollectionAsync(LoadCollectionParam requestParam)
+        public async Task<R<RpcStatus>> LoadCollectionAsync(LoadCollectionParam requestParam, CallOptions? callOptions = null)
         {
-            return await LoadCollectionAsync(requestParam.CollectionName);
+            return await LoadCollectionAsync(requestParam.CollectionName,callOptions);
         }
 
         ///<inheritdoc/>
-        public async Task<R<RpcStatus>> LoadCollectionAsync(string collectionName)
+        public async Task<R<RpcStatus>> LoadCollectionAsync(string collectionName,CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -425,7 +425,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName
                 };
 
-                var response = await client.LoadCollectionAsync(request,WithInternalOptions());
+                var response = await client.LoadCollectionAsync(request,callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -442,13 +442,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> ReleaseCollection(ReleaseCollectionParam requestParam)
+        public R<RpcStatus> ReleaseCollection(ReleaseCollectionParam requestParam, CallOptions? callOptions = null)
         {
-            return ReleaseCollection(requestParam.CollectionName);
+            return ReleaseCollection(requestParam.CollectionName, callOptions);
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> ReleaseCollection(string collectionName)
+        public R<RpcStatus> ReleaseCollection(string collectionName, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -463,7 +463,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName
                 };
 
-                var response = client.ReleaseCollection(request,WithInternalOptions());
+                var response = client.ReleaseCollection(request,callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -480,13 +480,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public async Task<R<RpcStatus>> ReleaseCollectionAsync(ReleaseCollectionParam requestParam)
+        public async Task<R<RpcStatus>> ReleaseCollectionAsync(ReleaseCollectionParam requestParam, CallOptions? callOptions = null)
         {
-            return await ReleaseCollectionAsync(requestParam.CollectionName);
+            return await ReleaseCollectionAsync(requestParam.CollectionName,callOptions);
         }
 
         ///<inheritdoc/>
-        public async Task<R<RpcStatus>> ReleaseCollectionAsync(string collectionName)
+        public async Task<R<RpcStatus>> ReleaseCollectionAsync(string collectionName, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -501,7 +501,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName
                 };
 
-                var response = await client.ReleaseCollectionAsync(request,WithInternalOptions());
+                var response = await client.ReleaseCollectionAsync(request,callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -520,7 +520,7 @@ namespace IO.Milvus.Client
 
         #region Partition
         ///<inheritdoc/>
-        public R<RpcStatus> CreatePartition(CreatePartitionParam requestParam)
+        public R<RpcStatus> CreatePartition(CreatePartitionParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -536,7 +536,7 @@ namespace IO.Milvus.Client
                     PartitionName = requestParam.PartitionName,
                 };
 
-                var response = client.CreatePartition(request,WithInternalOptions());
+                var response = client.CreatePartition(request,callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -554,7 +554,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> DropPartition(DropPartitionParam requestParam)
+        public R<RpcStatus> DropPartition(DropPartitionParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -570,7 +570,7 @@ namespace IO.Milvus.Client
                     PartitionName = requestParam.PartitionName,
                 };
 
-                var response = client.DropPartition(request, WithInternalOptions());
+                var response = client.DropPartition(request, callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -588,7 +588,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<bool> HasPartition(HasPartitionParam requestParam)
+        public R<bool> HasPartition(HasPartitionParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -604,7 +604,7 @@ namespace IO.Milvus.Client
                     PartitionName = requestParam.PartitionName,
                 };
 
-                var response = client.HasPartition(request, WithInternalOptions());
+                var response = client.HasPartition(request, callOptions ?? WithInternalOptions());
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
                     return R<bool>.Sucess(response.Value);
@@ -621,7 +621,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> LoadPartitions(LoadPartitionsParam requestParam)
+        public R<RpcStatus> LoadPartitions(LoadPartitionsParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -637,7 +637,7 @@ namespace IO.Milvus.Client
                 };
                 request.PartitionNames.AddRange(requestParam.PartitionNames);
 
-                var response = client.LoadPartitions(request, WithInternalOptions());
+                var response = client.LoadPartitions(request, callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -656,7 +656,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> ReleasePartitions(ReleasePartitionsParam requestParam)
+        public R<RpcStatus> ReleasePartitions(ReleasePartitionsParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -672,7 +672,7 @@ namespace IO.Milvus.Client
                 };
                 request.PartitionNames.AddRange(requestParam.PartitionNames);
 
-                var response = client.ReleasePartitions(request, WithInternalOptions());
+                var response = client.ReleasePartitions(request, callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -693,7 +693,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<GetPartitionStatisticsResponse> GetPartitionStatistics(GetPartitionStatisticsParam requestParam)
+        public R<GetPartitionStatisticsResponse> GetPartitionStatistics(GetPartitionStatisticsParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -719,7 +719,7 @@ namespace IO.Milvus.Client
                     PartitionName = requestParam.PartitionName
                 };
 
-                var response = client.GetPartitionStatistics(request, WithInternalOptions());
+                var response = client.GetPartitionStatistics(request, callOptions ?? WithInternalOptions());
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
                     return R<GetPartitionStatisticsResponse>.Sucess(response);
@@ -736,7 +736,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<ShowPartitionsResponse> ShowPartitions(ShowPartitionsParam requestParam)
+        public R<ShowPartitionsResponse> ShowPartitions(ShowPartitionsParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -753,7 +753,7 @@ namespace IO.Milvus.Client
                 };
                 request.PartitionNames.Add(requestParam.PartitionNames);
 
-                var response = client.ShowPartitions(request, WithInternalOptions());
+                var response = client.ShowPartitions(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -775,7 +775,7 @@ namespace IO.Milvus.Client
 
         #region Alias
         ///<inheritdoc/>
-        public R<RpcStatus> CreateAlias(CreateAliasParam requestParam)
+        public R<RpcStatus> CreateAlias(CreateAliasParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -791,7 +791,7 @@ namespace IO.Milvus.Client
                     Alias = requestParam.Alias,                    
                 };
 
-                var response = client.CreateAlias(request, WithInternalOptions());
+                var response = client.CreateAlias(request, callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -809,7 +809,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> AlterAlias(AlterAliasParam requestParam)
+        public R<RpcStatus> AlterAlias(AlterAliasParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -825,7 +825,7 @@ namespace IO.Milvus.Client
                     Alias = requestParam.Alias,
                 };
 
-                var response = client.AlterAlias(request, WithInternalOptions());
+                var response = client.AlterAlias(request, callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -843,7 +843,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> DropAlias(DropAliasParam requestParam)
+        public R<RpcStatus> DropAlias(DropAliasParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -858,7 +858,7 @@ namespace IO.Milvus.Client
                     Alias = requestParam.Alias,
                 };
 
-                var response = client.DropAlias(request, WithInternalOptions());
+                var response = client.DropAlias(request, callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -878,7 +878,7 @@ namespace IO.Milvus.Client
 
         #region Data
         ///<inheritdoc/>
-        public R<MutationResult> Insert(InsertParam requestParam)
+        public R<MutationResult> Insert(InsertParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -895,7 +895,7 @@ namespace IO.Milvus.Client
                 };
                 request.FieldsData.AddRange(requestParam.Fields);
 
-                var response = client.Insert(request, WithInternalOptions());
+                var response = client.Insert(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -915,7 +915,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public async Task<R<MutationResult>> InsertAsync(InsertParam requestParam)
+        public async Task<R<MutationResult>> InsertAsync(InsertParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -932,7 +932,7 @@ namespace IO.Milvus.Client
                 };
                 request.FieldsData.AddRange(requestParam.Fields);
 
-                var response = await client.InsertAsync(request, WithInternalOptions());
+                var response = await client.InsertAsync(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -952,7 +952,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<MutationResult> Delete(DeleteParam requestParam)
+        public R<MutationResult> Delete(DeleteParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -969,7 +969,7 @@ namespace IO.Milvus.Client
                     PartitionName = requestParam.PartitionName,
                 };
 
-                var response = client.Delete(request, WithInternalOptions());
+                var response = client.Delete(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -989,7 +989,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<FlushResponse> Flush(FlushParam requestParam)
+        public R<FlushResponse> Flush(FlushParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1020,7 +1020,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public async Task<R<FlushResponse>> FlushAsync(FlushParam requestParam)
+        public async Task<R<FlushResponse>> FlushAsync(FlushParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1051,7 +1051,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<GetFlushStateResponse> GetFlushState(GetFlushStateParam requestParam)
+        public R<GetFlushStateResponse> GetFlushState(GetFlushStateParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1084,7 +1084,7 @@ namespace IO.Milvus.Client
 
         #region Index
         ///<inheritdoc/>
-        public R<RpcStatus> CreateIndex(CreateIndexParam requestParam)
+        public R<RpcStatus> CreateIndex(CreateIndexParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1105,7 +1105,7 @@ namespace IO.Milvus.Client
                     Value = p.Value
                 }));
 
-                var response = client.CreateIndex(request, WithInternalOptions());
+                var response = client.CreateIndex(request, callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -1123,7 +1123,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> DropIndex(DropIndexParam requestParam)
+        public R<RpcStatus> DropIndex(DropIndexParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1139,7 +1139,7 @@ namespace IO.Milvus.Client
                     IndexName = requestParam.IndexName,
                 };
 
-                var response = client.DropIndex(request, WithInternalOptions());
+                var response = client.DropIndex(request, callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -1157,7 +1157,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<DescribeIndexResponse> DescribeIndex(DescribeIndexParam requestParam)
+        public R<DescribeIndexResponse> DescribeIndex(DescribeIndexParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1191,7 +1191,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<GetIndexBuildProgressResponse> GetIndexBuildProgress(GetIndexBuildProgressParam requestParam)
+        public R<GetIndexBuildProgressResponse> GetIndexBuildProgress(GetIndexBuildProgressParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1227,7 +1227,7 @@ namespace IO.Milvus.Client
 
         #region Search and Query
         ///<inheritdoc/>
-        public R<QueryResults> Query(QueryParam requestParam)
+        public R<QueryResults> Query(QueryParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1248,7 +1248,7 @@ namespace IO.Milvus.Client
                 request.OutputFields.AddRange(requestParam.OutFields);
                 request.PartitionNames.AddRange(requestParam.PartitionNames);
 
-                var response = client.Query(request, WithInternalOptions());
+                var response = client.Query(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -1268,7 +1268,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public async Task<R<QueryResults>> QueryAsync(QueryParam requestParam)
+        public async Task<R<QueryResults>> QueryAsync(QueryParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1289,7 +1289,7 @@ namespace IO.Milvus.Client
                 request.OutputFields.AddRange(requestParam.OutFields);
                 request.PartitionNames.AddRange(requestParam.PartitionNames);
 
-                var response = await client.QueryAsync(request, WithInternalOptions());
+                var response = await client.QueryAsync(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -1309,7 +1309,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<SearchResults> Search<TVector>(SearchParam<TVector> requestParam)
+        public R<SearchResults> Search<TVector>(SearchParam<TVector> requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1330,7 +1330,7 @@ namespace IO.Milvus.Client
                 request.PartitionNames.AddRange(requestParam.PartitionNames);
                 request.OutputFields.AddRange(requestParam.OutFields);
 
-                var response = client.Search(request, WithInternalOptions());
+                var response = client.Search(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -1350,7 +1350,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public async Task<R<SearchResults>> SearchAsync<TVector>(SearchParam<TVector> requestParam)
+        public async Task<R<SearchResults>> SearchAsync<TVector>(SearchParam<TVector> requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1371,7 +1371,7 @@ namespace IO.Milvus.Client
                 request.PartitionNames.AddRange(requestParam.PartitionNames);
                 request.OutputFields.AddRange(requestParam.OutFields);
 
-                var response = await client.SearchAsync(request, WithInternalOptions());
+                var response = await client.SearchAsync(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -1391,7 +1391,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<CalcDistanceResults> CalcDistance(CalcDistanceParam requestParam)
+        public R<CalcDistanceResults> CalcDistance(CalcDistanceParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1408,7 +1408,7 @@ namespace IO.Milvus.Client
                 //    FloatVector =
                 //};
 
-                var response = client.CalcDistance(request, WithInternalOptions());
+                var response = client.CalcDistance(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -1430,32 +1430,32 @@ namespace IO.Milvus.Client
 
         #region Credential
         [Obsolete]
-        public R<RpcStatus> CreateCredential(CreateCredentialParam requestParam)
+        public R<RpcStatus> CreateCredential(CreateCredentialParam requestParam, CallOptions? callOptions = null)
         {
             throw new NotImplementedException();
         }
 
         [Obsolete]
-        public R<RpcStatus> DeleteCredential(DeleteCredentialParam requestParam)
+        public R<RpcStatus> DeleteCredential(DeleteCredentialParam requestParam, CallOptions? callOptions = null)
         {
             throw new NotImplementedException();
         }
 
         [Obsolete]
-        public R<RpcStatus> UpdateCredential(UpdateCredentialParam requestParam)
+        public R<RpcStatus> UpdateCredential(UpdateCredentialParam requestParam, CallOptions? callOptions = null)
         {
             throw new NotImplementedException();
         }
         #endregion
 
         #region Others
-        public R<GetCompactionStateResponse> GetCompactionState(GetCompactionStateParam requestParam)
+        public R<GetCompactionStateResponse> GetCompactionState(GetCompactionStateParam requestParam, CallOptions? callOptions = null)
         {
             return GetCompactionState(requestParam.CompactionID);
         }
 
         ///<inheritdoc/>
-        public R<GetCompactionStateResponse> GetCompactionState(long compactionID)
+        public R<GetCompactionStateResponse> GetCompactionState(long compactionID, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1469,7 +1469,7 @@ namespace IO.Milvus.Client
                     CompactionID = compactionID
                 };
 
-                var response = client.GetCompactionState(request, WithInternalOptions());
+                var response = client.GetCompactionState(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -1489,13 +1489,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<GetCompactionPlansResponse> GetCompactionStateWithPlans(GetCompactionPlansParam requestParam)
+        public R<GetCompactionPlansResponse> GetCompactionStateWithPlans(GetCompactionPlansParam requestParam, CallOptions? callOptions = null)
         {
-            return GetCompactionStateWithPlans(requestParam.CompactionID);
+            return GetCompactionStateWithPlans(requestParam.CompactionID,callOptions);
         }
 
         ///<inheritdoc/>
-        public R<GetCompactionPlansResponse> GetCompactionStateWithPlans(long compactionID)
+        public R<GetCompactionPlansResponse> GetCompactionStateWithPlans(long compactionID, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1509,7 +1509,7 @@ namespace IO.Milvus.Client
                      CompactionID = compactionID
                 };
 
-                var response = client.GetCompactionStateWithPlans(request, WithInternalOptions());
+                var response = client.GetCompactionStateWithPlans(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -1529,7 +1529,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<GetMetricsResponse> GetMetrics(GetMetricsParam requestParam)
+        public R<GetMetricsResponse> GetMetrics(GetMetricsParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1543,7 +1543,7 @@ namespace IO.Milvus.Client
                     Request = requestParam.Request
                 };
 
-                var response = client.GetMetrics(request, WithInternalOptions());
+                var response = client.GetMetrics(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -1563,13 +1563,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<GetPersistentSegmentInfoResponse> GetPersistentSegmentInfo(GetPersistentSegmentInfoParam requestParam)
+        public R<GetPersistentSegmentInfoResponse> GetPersistentSegmentInfo(GetPersistentSegmentInfoParam requestParam, CallOptions? callOptions = null)
         {
-            return GetPersistentSegmentInfo(requestParam.CollectionName);
+            return GetPersistentSegmentInfo(requestParam.CollectionName,callOptions);
         }
 
         ///<inheritdoc/>
-        public R<GetPersistentSegmentInfoResponse> GetPersistentSegmentInfo(string collectionName)
+        public R<GetPersistentSegmentInfoResponse> GetPersistentSegmentInfo(string collectionName, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1584,7 +1584,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName
                 };
 
-                var response = client.GetPersistentSegmentInfo(request, WithInternalOptions());
+                var response = client.GetPersistentSegmentInfo(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -1604,13 +1604,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<GetQuerySegmentInfoResponse> GetQuerySegmentInfo(GetQuerySegmentInfoParam requestParam)
+        public R<GetQuerySegmentInfoResponse> GetQuerySegmentInfo(GetQuerySegmentInfoParam requestParam, CallOptions? callOptions = null)
         {
-            return GetQuerySegmentInfo(requestParam.CollectionName);
+            return GetQuerySegmentInfo(requestParam.CollectionName,callOptions);
         }
 
         ///<inheritdoc/>
-        public R<GetQuerySegmentInfoResponse> GetQuerySegmentInfo(string collectionName)
+        public R<GetQuerySegmentInfoResponse> GetQuerySegmentInfo(string collectionName, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1625,7 +1625,7 @@ namespace IO.Milvus.Client
                     CollectionName = collectionName
                 };
 
-                var response = client.GetQuerySegmentInfo(request, WithInternalOptions());
+                var response = client.GetQuerySegmentInfo(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -1645,7 +1645,7 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<RpcStatus> LoadBalance(LoadBalanceParam requestParam)
+        public R<RpcStatus> LoadBalance(LoadBalanceParam requestParam, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1662,7 +1662,7 @@ namespace IO.Milvus.Client
                 request.SealedSegmentIDs.AddRange(requestParam.SegmentIDs);
                 request.DstNodeIDs.AddRange(requestParam.DestNodeIDs);
 
-                var response = client.LoadBalance(request, WithInternalOptions());
+                var response = client.LoadBalance(request, callOptions ?? WithInternalOptions());
                 if (response.ErrorCode == ErrorCode.Success)
                 {
                     return R<RpcStatus>.Sucess(new RpcStatus(RpcStatus.SUCCESS_MSG));
@@ -1680,13 +1680,13 @@ namespace IO.Milvus.Client
         }
 
         ///<inheritdoc/>
-        public R<ManualCompactionResponse> ManualCompaction(ManualCompactionParam requestParam)
+        public R<ManualCompactionResponse> ManualCompaction(ManualCompactionParam requestParam, CallOptions? callOptions = null)
         {
-            return ManualCompaction(requestParam.CollectionName);
+            return ManualCompaction(requestParam.CollectionName,callOptions);
         }
 
         ///<inheritdoc/>
-        public R<ManualCompactionResponse> ManualCompaction(string collectionName)
+        public R<ManualCompactionResponse> ManualCompaction(string collectionName, CallOptions? callOptions = null)
         {
             if (!ClientIsReady())
             {
@@ -1707,7 +1707,7 @@ namespace IO.Milvus.Client
                     CollectionID = describleCollectionResponse.Data.CollectionID,
                 };
 
-                var response = client.ManualCompaction(request, WithInternalOptions());
+                var response = client.ManualCompaction(request, callOptions ?? WithInternalOptions());
 
                 if (response.Status.ErrorCode == ErrorCode.Success)
                 {
@@ -1724,6 +1724,11 @@ namespace IO.Milvus.Client
             {
                 return R<ManualCompactionResponse>.Failed(e);
             }
+        }
+
+        public R<GetIndexStateResponse> getIndexState(GetIndexStateParam requestParam, CallOptions? callOptions = null)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 
