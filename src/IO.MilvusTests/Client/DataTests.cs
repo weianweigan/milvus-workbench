@@ -2,6 +2,11 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IO.MilvusTests.Client.Base;
 using IO.Milvus.Param.Dml;
+using Google.Protobuf.Collections;
+using IO.Milvus.Grpc;
+using IO.MilvusTests;
+using IO.Milvus.Param.Collection;
+using IO.Milvus.Param.Partition;
 
 namespace IO.Milvus.Client.Tests
 {
@@ -11,7 +16,9 @@ namespace IO.Milvus.Client.Tests
     [TestClass]
     public class DataTests : MilvusServiceClientTestsBase
     {
-        private void PreaeData()
+        public const string Book = nameof(Book);
+
+        private InsertParam PreareData(string collectionName, string partitionName)
         {
             var r = new Random(DateTime.Now.Second);
 
@@ -23,7 +30,7 @@ namespace IO.Milvus.Client.Tests
             {
                 bookIds.Add(i);
                 wordCounts.Add(i + 10000);
-                List<float> vector = new List<float>();
+                var vector = new List<float>();
                 for (int k = 0; k < 2; ++k)
                 {
                     vector.Add(r.NextSingle());
@@ -31,56 +38,90 @@ namespace IO.Milvus.Client.Tests
                 bookIntros.Add(vector);
             }
 
-            var insertParam = InsertParam.Create("", "",
-                new Google.Protobuf.Collections.RepeatedField<Grpc.FieldData>()
+            var insertParam = InsertParam.Create(collectionName, partitionName,
+                new List<Field>()
                 {
-                    new Grpc.FieldData()
-                    {
-                        FieldName = "book_id",
-                        Type = Grpc.DataType.Int64,
-                        Vectors = new Grpc.VectorField()
+                    Field.Create(nameof(bookIds),bookIds),
+                    Field.Create(nameof(wordCounts),wordCounts),
+                    Field.CreateBinaryVectors(nameof(bookIntros),bookIntros),
+                });
+
+            return insertParam;
+        }
+
+        private void CreateBookCollection()
+        {
+            var hasBookCollection = MilvusClient.HasCollection(Book);
+            if (!hasBookCollection.Data)
+            {
+                var r = MilvusClient.CreateCollection(
+                    CreateCollectionParam.Create(
+                        Book,
+                        2,
+                        new List<FieldType>()
                         {
-                            
-                        }
-                    }
-                },
-                1);
+                            FieldType.Create(
+                                "bookIds",
+                                DataType.Int64,
+                                isPrimaryLey:true),
+                            FieldType.Create("wordCounts",DataType.Int64),
+                            FieldType.Create(
+                                "bookIntros",
+                                "",
+                                DataType.FloatVector,
+                                dimension:2,
+                                0)
+                        }));
+
+                AssertRpcStatus(r);
+            }
         }
 
         [TestMethod()]
-        public void InsertTest()
+        [DataRow(Book, HostConfig.DefaultTestPartitionName)]
+        public void AInsertTest(string collectionName, string partitionName)
         {
-            
+            CreateBookCollection();
+
+            var data = PreareData(collectionName, partitionName);
+
+            var hasP = MilvusClient.HasPartition(HasPartitionParam.Create(collectionName, partitionName));
+            if (!hasP.Data)
+            {
+                var createP = MilvusClient.CreatePartition(CreatePartitionParam.Create(collectionName, partitionName));
+                AssertRpcStatus(createP);
+            }
+
+            var r = MilvusClient.Insert(data);
+
+            Assert.IsNotNull(r);
+            Assert.IsTrue(r.Status == Param.Status.Success, r.Exception?.ToString());
+            Assert.IsTrue(r.Data.SuccIndex.Count > 0);
         }
 
         [TestMethod()]
-        public void InsertAsyncTest()
+        [DataRow(HostConfig.DefaultTestCollectionName, HostConfig.DefaultTestPartitionName)]
+        public void BDeleteTest(string collectionName, string partitionName)
         {
-            Assert.Fail();
+            var r = MilvusClient.Delete(DeleteParam.Create(collectionName, $"bookIds != 0"));
+
+            Assert.IsNotNull(r);
+            Assert.IsTrue(r.Status == Param.Status.Success, r.Exception?.ToString());
+            Assert.IsTrue(r.Data.SuccIndex.Count > 0);
         }
 
         [TestMethod()]
-        public void DeleteTest()
+        [DataRow(Book)]
+        public void GetCompactionStateTest(string collectionName)
         {
-            Assert.Fail();
-        }
+            var r = MilvusClient.ManualCompaction(collectionName);
 
-        [TestMethod()]
-        public void FlushTest()
-        {
-            Assert.Fail();
-        }
+            Assert.IsNotNull(r);
+            Assert.IsTrue(r.Status == Param.Status.Success, r.Exception?.ToString());
 
-        [TestMethod()]
-        public void FlushAsyncTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void GetFlushStateTest()
-        {
-            Assert.Fail();
+            var stateR = MilvusClient.GetCompactionState(r.Data.CompactionID);
+            Assert.IsNotNull(stateR);
+            Assert.IsTrue(stateR.Status == Param.Status.Success, stateR.Exception?.ToString());
         }
     }
 }
