@@ -35,10 +35,10 @@ namespace IO.Milvus.Client
         /// </summary>
         /// <param name="connectParam">use <see cref="ConnectParam.Create(string, int, string, string)"/> to create a connectparam</param>
         /// <returns><see cref="MilvusService.MilvusServiceClient"/></returns>
-        public MilvusService.MilvusServiceClient CreateGrpcDefaultClient(ConnectParam connectParam)
+        public static MilvusService.MilvusServiceClient CreateGrpcDefaultClient(ConnectParam connectParam)
         {
             connectParam.Check();
-            channel = GrpcChannel.ForAddress(connectParam.GetAddress());
+            var channel = GrpcChannel.ForAddress(connectParam.GetAddress());
             return new MilvusService.MilvusServiceClient(channel);
         }
     }
