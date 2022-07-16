@@ -2,6 +2,11 @@
 
 ![](./milvussharp.png)
 
+<div class="column" align="left">
+  <img src="https://img.shields.io/github/workflow/status/weianweigan/milvus-sdk-csharp/Build"/>
+  <img src="https://img.shields.io/nuget/v/io.milvus"/>
+</div>
+
 C# SDK for Milvus.
 
 ## Getting Started
@@ -17,8 +22,10 @@ What things you need to install the software and how to install them
 
 ### Installing
 
+
+
 ```
-Install-Package IO.Milvus -Version 2.0.0-alpha
+Install-Package IO.Milvus -Version 2.0.0-alpha.2
 ```
 
 ### Examples
