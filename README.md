@@ -53,7 +53,7 @@ Or
 
 ### Examples
 
-Connect client
+Connect to a Milvus server.
 
 ```csharp
 var milvusClient = new MilvusServiceClient(
@@ -61,7 +61,7 @@ var milvusClient = new MilvusServiceClient(
     host: "192.168.100.139",
     port: 19531));
 ```
-disconnet
+Disconnect from a Milvus server.
 
 ```csharp
 milvusClient.close();
