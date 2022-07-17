@@ -16,15 +16,13 @@ using System.Windows.Shapes;
 namespace IO.Milvus.Workbench.Pages
 {
     /// <summary>
-    /// Dashboard.xaml 的交互逻辑
+    /// Collections.xaml 的交互逻辑
     /// </summary>
-    public partial class Dashboard : Page
+    public partial class Collections : Page
     {
-        public Dashboard()
+        public Collections()
         {
             InitializeComponent();
-
-            DataContext = MainWindow.VM;
         }
     }
 }

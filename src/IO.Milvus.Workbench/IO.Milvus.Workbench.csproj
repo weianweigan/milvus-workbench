@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
+    <PackageReference Include="IO.Milvus" Version="2.0.0-alpha.2" />
     <PackageReference Include="WPF-UI" Version="2.0.1" />
   </ItemGroup>
 

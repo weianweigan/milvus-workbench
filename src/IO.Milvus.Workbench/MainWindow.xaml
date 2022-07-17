@@ -7,9 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="clr-namespace:IO.Milvus.Workbench.Pages"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    Title="MainWindow"
-    Width="800"
-    Height="450"
+    Title="Milvus-Workbench"
+    Width="1000"
+    Height="700"
     Style="{StaticResource UiWindow}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -38,10 +38,33 @@
                 SelectedPageIndex="0">
                 <ui:NavigationStore.Items>
                     <ui:NavigationItem
-                        Content="Milvus Manager"
+                        Content="Milvus"                        
                         Icon="Home24"
                         PageTag="dashboard"
+                        DataContext="{Binding}"                        
                         PageType="{x:Type pages:Dashboard}" />
+                    <ui:NavigationSeparator/>
+                    <ui:NavigationItem
+                        Content="Overview"                        
+                        Icon="Home24"
+                        PageTag="overview"
+                        PageType="{x:Type pages:Overview}" >
+                    </ui:NavigationItem>
+                    <ui:NavigationItem
+                        Content="Collections"
+                        Icon="Box24"
+                        PageTag="collections"
+                        PageType="{x:Type pages:Collections}" />
+                    <ui:NavigationItem
+                        Content="Serach"
+                        Icon="Search24"
+                        PageTag="vectorsearch"
+                        PageType="{x:Type pages:VectorSearch}" />
+                    <ui:NavigationItem
+                        Content="System"
+                        Icon="ViewDesktop24"
+                        PageTag="systemview"
+                        PageType="{x:Type pages:SystemView}" />
                 </ui:NavigationStore.Items>
                 <ui:NavigationStore.Footer>
                     <ui:NavigationItem Content="Settings" Icon="Diversity24" />

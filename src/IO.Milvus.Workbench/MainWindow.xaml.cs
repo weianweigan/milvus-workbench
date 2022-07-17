@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IO.Milvus.Workbench.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,9 +23,12 @@ namespace IO.Milvus.Workbench
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static MainWindowViewModel VM { get; private set; }
+
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = (VM = new MainWindowViewModel());
         }
 
         private void RootNavigation_OnNavigated(
