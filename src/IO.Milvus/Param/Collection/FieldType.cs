@@ -12,19 +12,20 @@ namespace IO.Milvus.Param.Collection
     /// </summary>
     public class FieldType
     {
+        private int dimension;
         #region Fields
         #endregion
 
         #region Ctor
         public FieldType()
         {
-            
+
         }
 
         public static FieldType Create(
             string name,
             DataType dataType,
-            Dictionary<string,string> typeParams = null,
+            Dictionary<string, string> typeParams = null,
             bool isPrimaryLey = false,
             bool isAutoID = false)
         {
@@ -54,7 +55,7 @@ namespace IO.Milvus.Param.Collection
             DataType dataType,
             int dimension,
             int maxLength,
-            Dictionary<string, string> typeParams,
+            Dictionary<string, string> typeParams = null,
             bool isPrimaryLey = false,
             bool isAutoID = false)
         {
@@ -83,7 +84,14 @@ namespace IO.Milvus.Param.Collection
         #endregion
 
         #region Properties
-        public int Dimension { get; set; }
+        public int Dimension
+        {
+            get => dimension; set
+            {
+                dimension = value;
+                TypeParams[Constant.VECTOR_DIM] = Dimension.ToString();
+            }
+        }
 
         public int MaxLength { get; set; }
 
@@ -157,7 +165,7 @@ namespace IO.Milvus.Param.Collection
                 }
             }
         }
-    
+
         /// <summary>
         /// Construct a <code>string</code> by <see cref="FieldType"/> instance.
         /// </summary>

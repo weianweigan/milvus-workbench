@@ -141,7 +141,6 @@ namespace IO.Milvus.Client
         ///<inheritdoc/>
         public R<RpcStatus> CreateCollection(CreateCollectionParam requestParam, CallOptions? callOptions = null)
         {
-            requestParam.Check();
             if (!ClientIsReady())
             {
                 return R<RpcStatus>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
@@ -149,6 +148,7 @@ namespace IO.Milvus.Client
 
             try
             {
+                requestParam.Check();
                 var schema = new CollectionSchema()
                 {
                     Name = requestParam.CollectionName,
@@ -891,8 +891,9 @@ namespace IO.Milvus.Client
                 {
                     CollectionName = requestParam.CollectionName,
                     PartitionName = requestParam.PartitionName,
+                    NumRows = requestParam.RowCount,
                 };
-                request.FieldsData.AddRange(requestParam.Fields);
+                request.FieldsData.AddRange(requestParam.Fields.Select(p => p.ToGrpcFieldData()));
 
                 var response = client.Insert(request, callOptions ?? WithInternalOptions());
 
@@ -929,7 +930,7 @@ namespace IO.Milvus.Client
                     CollectionName = requestParam.CollectionName,
                     PartitionName = requestParam.PartitionName,
                 };
-                request.FieldsData.AddRange(requestParam.Fields);
+                request.FieldsData.AddRange(requestParam.Fields.Select(p => p.ToGrpcFieldData()));
 
                 var response = await client.InsertAsync(request, callOptions ?? WithInternalOptions());
 
@@ -984,6 +985,85 @@ namespace IO.Milvus.Client
             catch (System.Exception e)
             {
                 return R<MutationResult>.Failed(e);
+            }
+        }
+
+        public R<GetCompactionStateResponse> GetCompactionState(GetCompactionStateParam requestParam, CallOptions? callOptions = null)
+        {
+            return GetCompactionState(requestParam.CompactionID);
+        }
+
+        ///<inheritdoc/>
+        public R<GetCompactionStateResponse> GetCompactionState(long compactionID, CallOptions? callOptions = null)
+        {
+            if (!ClientIsReady())
+            {
+                return R<GetCompactionStateResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                var request = new GetCompactionStateRequest()
+                {
+                    CompactionID = compactionID
+                };
+
+                var response = client.GetCompactionState(request, callOptions ?? WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<GetCompactionStateResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<GetCompactionStateResponse>(
+                        nameof(GetCompactionStateRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<GetCompactionStateResponse>.Failed(e);
+            }
+        }
+
+        ///<inheritdoc/>
+        public R<GetCompactionPlansResponse> GetCompactionStateWithPlans(GetCompactionPlansParam requestParam, CallOptions? callOptions = null)
+        {
+            return GetCompactionStateWithPlans(requestParam.CompactionID, callOptions);
+        }
+
+        ///<inheritdoc/>
+        public R<GetCompactionPlansResponse> GetCompactionStateWithPlans(long compactionID, CallOptions? callOptions = null)
+        {
+            if (!ClientIsReady())
+            {
+                return R<GetCompactionPlansResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
+            }
+
+            try
+            {
+                var request = new GetCompactionPlansRequest()
+                {
+                    CompactionID = compactionID
+                };
+
+                var response = client.GetCompactionStateWithPlans(request, callOptions ?? WithInternalOptions());
+
+                if (response.Status.ErrorCode == ErrorCode.Success)
+                {
+                    return R<GetCompactionPlansResponse>.Sucess(response);
+                }
+                else
+                {
+                    return FailedStatus<GetCompactionPlansResponse>(
+                        nameof(GetCompactionStateRequest),
+                        response.Status);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return R<GetCompactionPlansResponse>.Failed(e);
             }
         }
 
@@ -1448,85 +1528,6 @@ namespace IO.Milvus.Client
         #endregion
 
         #region Others
-        public R<GetCompactionStateResponse> GetCompactionState(GetCompactionStateParam requestParam, CallOptions? callOptions = null)
-        {
-            return GetCompactionState(requestParam.CompactionID);
-        }
-
-        ///<inheritdoc/>
-        public R<GetCompactionStateResponse> GetCompactionState(long compactionID, CallOptions? callOptions = null)
-        {
-            if (!ClientIsReady())
-            {
-                return R<GetCompactionStateResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
-            }
-
-            try
-            {
-                var request = new GetCompactionStateRequest()
-                {
-                    CompactionID = compactionID
-                };
-
-                var response = client.GetCompactionState(request, callOptions ?? WithInternalOptions());
-
-                if (response.Status.ErrorCode == ErrorCode.Success)
-                {
-                    return R<GetCompactionStateResponse>.Sucess(response);
-                }
-                else
-                {
-                    return FailedStatus<GetCompactionStateResponse>(
-                        nameof(GetCompactionStateRequest),
-                        response.Status);
-                }
-            }
-            catch (System.Exception e)
-            {
-                return R<GetCompactionStateResponse>.Failed(e);
-            }
-        }
-
-        ///<inheritdoc/>
-        public R<GetCompactionPlansResponse> GetCompactionStateWithPlans(GetCompactionPlansParam requestParam, CallOptions? callOptions = null)
-        {
-            return GetCompactionStateWithPlans(requestParam.CompactionID,callOptions);
-        }
-
-        ///<inheritdoc/>
-        public R<GetCompactionPlansResponse> GetCompactionStateWithPlans(long compactionID, CallOptions? callOptions = null)
-        {
-            if (!ClientIsReady())
-            {
-                return R<GetCompactionPlansResponse>.Failed(new ClientNotConnectedException("Client rpc channel is not ready"));
-            }
-
-            try
-            {
-                var request = new GetCompactionPlansRequest()
-                {
-                     CompactionID = compactionID
-                };
-
-                var response = client.GetCompactionStateWithPlans(request, callOptions ?? WithInternalOptions());
-
-                if (response.Status.ErrorCode == ErrorCode.Success)
-                {
-                    return R<GetCompactionPlansResponse>.Sucess(response);
-                }
-                else
-                {
-                    return FailedStatus<GetCompactionPlansResponse>(
-                        nameof(GetCompactionStateRequest),
-                        response.Status);
-                }
-            }
-            catch (System.Exception e)
-            {
-                return R<GetCompactionPlansResponse>.Failed(e);
-            }
-        }
-
         ///<inheritdoc/>
         public R<GetMetricsResponse> GetMetrics(GetMetricsParam requestParam, CallOptions? callOptions = null)
         {
