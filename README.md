@@ -3,6 +3,7 @@
 <div class="column" align="middle">
   <img src="https://img.shields.io/github/workflow/status/weianweigan/milvus-sdk-csharp/Build"/>
   <img src="https://img.shields.io/nuget/v/io.milvus"/>
+  <img src="https://img.shields.io/nuget/dt/io.milvus"/>
 </div>
 
 <div align="middle">
