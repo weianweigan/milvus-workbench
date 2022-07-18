@@ -83,4 +83,4 @@ var defualtClient = MilvusServiceClient.CreateGrpcDefaultClient(
 
 If you want to use io.milvus in asp.net core, you can take a look at this [doc](https://docs.microsoft.com/zh-cn/aspnet/core/grpc/?view=aspnetcore-6.0).
 
-Use namespace of IO.Milvus.Grpc with [IOC](https://docs.microsoft.com/zh-cn/aspnet/core/grpc/clientfactory?view=aspnetcore-6.0).
+Use namespace of IO.Milvus.Grpc with [DI](https://docs.microsoft.com/zh-cn/aspnet/core/grpc/clientfactory?view=aspnetcore-6.0).
