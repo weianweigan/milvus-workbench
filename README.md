@@ -65,7 +65,7 @@ var milvusClient = new MilvusServiceClient(
 Disconnect from a Milvus server.
 
 ```csharp
-milvusClient.close();
+milvusClient.Close();
 ```
 
 Please refer to [Test Project](https://github.com/weianweigan/milvus-sdk-csharp/tree/develop/src/IO.MilvusTests) for more examples.
