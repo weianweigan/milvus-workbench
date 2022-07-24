@@ -5,8 +5,6 @@
     xmlns:local="clr-namespace:IO.Milvus.Workbench"
     StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary>
-           
-        </ResourceDictionary>
+        <ResourceDictionary Source="./Themes/Generic.xaml" />
     </Application.Resources>
 </Application>

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using AvalonDock.Layout;
 using IO.Milvus.Workbench.ViewModels;
 
 namespace IO.Milvus.Workbench
@@ -8,12 +9,14 @@ namespace IO.Milvus.Workbench
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static MainWindowViewModel VM { get; private set; }
+        public MainWindowViewModel VM { get; private set; }
 
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = (VM = new MainWindowViewModel());
+            DataContext = (VM = new MainWindowViewModel(documentPane));
         }
+
+
     }
 }
