@@ -84,11 +84,6 @@
                         <local:AvalonEditBehavior InputText="{Binding QueryText}" />
                     </i:Interaction.Behaviors>
                 </avalonEdit:TextEditor>
-                <!--<TextBox
-                    Height="23"
-
-                    FontSize="16"
-                    Text="22" />-->
                 <Button
                     Width="23"
                     Height="23"

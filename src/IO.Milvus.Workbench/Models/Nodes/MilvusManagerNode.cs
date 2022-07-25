@@ -37,9 +37,9 @@ namespace IO.Milvus.Workbench.Models
             {
                 Directory.CreateDirectory(dir);
             }
-            
+
 #if NET461_OR_GREATER
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 File.WriteAllText(ConfigFilePathName, str);
             });
@@ -53,7 +53,7 @@ namespace IO.Milvus.Workbench.Models
             if (File.Exists(ConfigFilePathName))
             {
 #if NET461_OR_GREATER
-                var str = await  Task.Run(() =>{
+                var str = await Task.Run(() =>{
                     return File.ReadAllText(ConfigFilePathName); 
                 });               
 #else

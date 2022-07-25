@@ -1,6 +1,7 @@
 ﻿using AvalonDock.Layout;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using IO.Milvus.Utils;
 using IO.Milvus.Workbench.Dialogs;
 using IO.Milvus.Workbench.DocumentViews;
 using IO.Milvus.Workbench.Models;
@@ -18,6 +19,7 @@ namespace IO.Milvus.Workbench.ViewModels
         private AsyncRelayCommand _addCmd;
         private MilvusManagerNode _milvusManagerNode;
         private RelayCommand _openPageCmd;
+        private RelayCommand _openVectorSearchPageCmd;
 
         public MainWindowViewModel(LayoutDocumentPane documentPane)
         {
@@ -25,14 +27,21 @@ namespace IO.Milvus.Workbench.ViewModels
             DocumentPane = documentPane;
         }
 
+        #region Properties
+        public LayoutDocumentPane DocumentPane { get; }
+
         public MilvusManagerNode MilvusManagerNode { get => _milvusManagerNode; set => SetProperty(ref _milvusManagerNode, value); }
 
-        public Node SelectedNode { get;private set; }
+        public Node SelectedNode { get; private set; }
 
         public AsyncRelayCommand AddCmd { get => _addCmd ?? (_addCmd = new AsyncRelayCommand(AddClickAsync)); }
 
         public RelayCommand OpenPageCmd { get => _openPageCmd ?? (_openPageCmd = new RelayCommand(OpenClick)); }
 
+        public RelayCommand OpenVectorSearchPageCmd { get => _openVectorSearchPageCmd ?? (_openVectorSearchPageCmd = new RelayCommand(OpenVectorSearchPageClick,() => MilvusManagerNode.Children.IsNotEmpty())); }
+        #endregion
+
+        #region Private Methods
         private void OpenClick()
         {
             SelectedNode = MilvusManagerNode
@@ -49,7 +58,7 @@ namespace IO.Milvus.Workbench.ViewModels
                 existDoc.IsActive = true;
                 return;
             }
-           
+
 
             if (SelectedNode is CollectionNode node)
             {
@@ -62,7 +71,7 @@ namespace IO.Milvus.Workbench.ViewModels
                         {
                             DataContext = node,
                         }
-                    },                      
+                    },
                 };
 
                 DocumentPane.Children.Add(newDocPage);
@@ -84,14 +93,32 @@ namespace IO.Milvus.Workbench.ViewModels
                 await milvus.ConnectAsync();
             }
 
+            OpenVectorSearchPageCmd.NotifyCanExecuteChanged();
+
             //Save Config
             await MilvusManagerNode.SaveAsync();
         }
 
-        public RelayCommand DeleteCmd { get; set; }
+        private void OpenVectorSearchPageClick()
+        {
+            var newDocPage = new LayoutDocument()
+            {
+                Title = "VectorSearch",
+                Content = new Frame()
+                {
+                    Content = new VectorSearchPage()
+                    {
+                        DataContext = new VectorSearchViewModel(MilvusManagerNode),
+                    }
+                },
+            };
 
-        public LayoutDocumentPane DocumentPane { get; }
+            DocumentPane.Children.Add(newDocPage);
+            newDocPage.IsActive = true;
+        }
+        #endregion
 
+        #region Internal Methods
         internal async Task LoadMilvusInstanceConfigAsync()
         {
             var configs = await MilvusManagerNode.ReadConfigAsync();
@@ -106,6 +133,9 @@ namespace IO.Milvus.Workbench.ViewModels
 
                 await milvus.ConnectAsync();
             }
+
+            OpenVectorSearchPageCmd.NotifyCanExecuteChanged();
         }
+        #endregion
     }
 }

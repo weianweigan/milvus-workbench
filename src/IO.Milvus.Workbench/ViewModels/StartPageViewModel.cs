@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IO.Milvus.Workbench.ViewModels
 {
-    internal class StartPageViewModel
+    public class StartPageViewModel
     {
     }
 }

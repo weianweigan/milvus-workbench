@@ -92,10 +92,7 @@ namespace IO.Milvus.Workbench.Models
 
             if (r.Status != Param.Status.Success)
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    State = NodeState.Error;
-                });
+                State = NodeState.Error;
                 return;
             }
 
@@ -104,14 +101,11 @@ namespace IO.Milvus.Workbench.Models
             ShardsNum = r.Data.ShardsNum;
 
             //Query Partition
-            var allPartitionR = Parent.ServiceClient.ShowPartitions(ShowPartitionsParam.Create(Name, null));
+            var allPartitionR = await Task.Run(() => Parent.ServiceClient.ShowPartitions(ShowPartitionsParam.Create(Name, null)));
 
             if (allPartitionR.Status != Param.Status.Success)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    State = NodeState.Error;
-                });
+            {                
+                State = NodeState.Error;
                 return;
             }
 
@@ -120,11 +114,8 @@ namespace IO.Milvus.Workbench.Models
                 var partition = new PartitionNode(
                     allPartitionR.Data.PartitionNames[i],
                     allPartitionR.Data.PartitionIDs[i]);
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Children.Add(partition);
-                });
+                
+                 Children.Add(partition);                
             }
 
             var fields = new List<FieldModel>();

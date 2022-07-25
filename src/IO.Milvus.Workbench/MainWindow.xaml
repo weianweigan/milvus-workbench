@@ -44,8 +44,11 @@
                                     BorderThickness="0"
                                     ToolBar.OverflowMode="AsNeeded"
                                     ToolBarTray.IsLocked="True">
-                                    <Button Command="{Binding AddCmd}">
+                                    <Button Command="{Binding AddCmd}" ToolTip="Add Milvus Instance">
                                         <Image Source="{StaticResource addDatabase16}" />
+                                    </Button>
+                                    <Button Command="{Binding OpenVectorSearchPageCmd}" ToolTip="Open Vector Search Page">
+                                        <Image Source="{StaticResource vectorSearch16}" />
                                     </Button>
                                 </ToolBar>
                                 <TreeView
@@ -73,9 +76,9 @@
                             <ad:LayoutDocument Title="Start Page" CanClose="True">
                                 <Frame>
                                     <Frame.Content>
-                                        <pages:StartPage/>
+                                        <pages:StartPage />
                                     </Frame.Content>
-                                </Frame> 
+                                </Frame>
                             </ad:LayoutDocument>
                         </ad:LayoutDocumentPane>
                     </ad:LayoutPanel>

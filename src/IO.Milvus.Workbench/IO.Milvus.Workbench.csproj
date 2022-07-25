@@ -25,6 +25,8 @@
     <None Remove="Assets\Icons\milvusDisconnect16.png" />
     <None Remove="Assets\Icons\partitionCreate16.png" />
     <None Remove="Assets\Icons\partitionDelete16.png" />
+    <None Remove="Assets\Icons\vectorSearch16.png" />
+    <None Remove="Assets\milvus-horizontal-color.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,6 +59,11 @@
     <Resource Include="Assets\Icons\milvusDelete16.png" />
     <Resource Include="Assets\Icons\milvusDisconnect16.png" />
     <Resource Include="Assets\Icons\partitionDelete16.png" />
+    <Resource Include="Assets\Icons\vectorSearch16.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SplashScreen Include="Assets\milvus-horizontal-color.png" />
   </ItemGroup>
 
 </Project>
