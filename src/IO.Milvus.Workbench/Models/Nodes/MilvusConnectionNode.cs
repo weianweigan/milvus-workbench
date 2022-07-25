@@ -2,16 +2,14 @@
 using IO.Milvus.Param;
 using IO.Milvus.Param.Collection;
 using IO.Milvus.Utils;
-using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace IO.Milvus.Workbench.Models
 {
-
-    public class MilvusConnectionNode : Node<CollectionNode>
+    //TODO: Fix JsonIngnore in net461
+    public class MilvusConnectionNode : Node<CollectionNode>,IEqualityComparer<MilvusConnectionNode>
     {
 
         public MilvusConnectionNode(string name, string host, int port)
@@ -85,6 +83,16 @@ namespace IO.Milvus.Workbench.Models
                     Msg = ex.Message;
                 });
             }
+        }
+
+        public bool Equals(MilvusConnectionNode x, MilvusConnectionNode y)
+        {
+            return x.Url == y.Url;
+        }
+
+        public int GetHashCode(MilvusConnectionNode obj)
+        {
+            return obj.Url.GetHashCode();
         }
 
         public override string ToString()

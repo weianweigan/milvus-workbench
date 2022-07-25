@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:IO.Milvus.Workbench.DocumentViews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:IO.Milvus.Workbench.Models"
@@ -17,7 +18,7 @@
             <RowDefinition Height="7*" />
         </Grid.RowDefinitions>
         <ListView
-            Margin="0,0,0,2"
+            Margin="5,10"
             Background="Transparent"
             ItemsSource="{Binding Fields}">
             <ListView.View>
@@ -52,10 +53,10 @@
             </ListView.View>
         </ListView>
         <GridSplitter
-            Height="2"
+            Height="5"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Bottom"
-            Background="Gray"
+            Background="#EEEEF2"
             ResizeDirection="Rows" />
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
@@ -70,24 +71,29 @@
                 </Grid.ColumnDefinitions>
                 <avalonEdit:TextEditor
                     Name="textEditor"
-                    FontFamily="Consolas"
                     MinHeight="23"
-                    BorderThickness="1"
+                    Margin="10,10,22,10"
                     BorderBrush="Gray"
+                    BorderThickness="1"
+                    FontFamily="Consolas"
                     FontSize="10pt"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    SyntaxHighlighting="milvusquery"
-                    Margin="10,10,22,10"/>
+                    SyntaxHighlighting="milvusquery">
+                    <i:Interaction.Behaviors>
+                        <local:AvalonEditBehavior InputText="{Binding QueryText}" />
+                    </i:Interaction.Behaviors>
+                </avalonEdit:TextEditor>
                 <!--<TextBox
                     Height="23"
-                    
+
                     FontSize="16"
                     Text="22" />-->
                 <Button
                     Width="23"
                     Height="23"
-                    HorizontalAlignment="Right">
+                    HorizontalAlignment="Right"
+                    Visibility="Collapsed">
                     <Image Source="{StaticResource filter}" />
                 </Button>
                 <Button
@@ -99,8 +105,13 @@
                     Grid.Column="2"
                     Width="75"
                     Height="23"
+                    Command="{Binding QueryCmd}"
                     Content="Query" />
             </Grid>
+            <ListView
+                Grid.Row="3"
+                Margin="5"
+                ItemsSource="{Binding QueryResultData}" />
         </Grid>
     </Grid>
 </Page>

@@ -10,13 +10,36 @@
         <local:TreeNodeItemTemplateSelector.MilvusConnectionNodeDT>
             <DataTemplate DataType="{x:Type models:MilvusConnectionNode}">
                 <Grid Height="20">
+                    <Grid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Connect Milvus">
+                                <MenuItem.Icon>
+                                    <Image Source="../Assets/Icons/milvusConnect16.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Disconnect Milvus">
+                                <MenuItem.Icon>
+                                    <Image Source="../Assets/Icons/milvusDisconnect16.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Delete">
+                                <MenuItem.Icon>
+                                    <Image Source="../Assets/Icons/milvusDelete16.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Add Collection">
+                                <MenuItem.Icon>
+                                    <Image Source="../Assets/Icons/milvusAddCollection16.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </Grid.ContextMenu>
                     <Grid.ToolTip>
                         <TextBlock Text="{Binding}" />
                     </Grid.ToolTip>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="32" />
                         <ColumnDefinition />
-                        <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
                     <Image Height="20" Source="{StaticResource milvus32}" />
                     <TextBlock
@@ -29,13 +52,36 @@
         <local:TreeNodeItemTemplateSelector.CollectionNodeDT>
             <DataTemplate DataType="{x:Type models:CollectionNode}">
                 <Grid Height="20">
+                    <Grid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Load Collection">
+                                <MenuItem.Icon>
+                                    <Image Source="../Assets/Icons/collectionLoad16.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Release Collection">
+                                <MenuItem.Icon>
+                                    <Image Source="../Assets/Icons/collectionRelease16.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Delete Collection">
+                                <MenuItem.Icon>
+                                    <Image Source="../Assets/Icons/collectionDelete16.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Create Partition">
+                                <MenuItem.Icon>
+                                    <Image Source="../Assets/Icons/partitionCreate16.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </Grid.ContextMenu>
                     <Grid.ToolTip>
                         <TextBlock Text="{Binding}" />
                     </Grid.ToolTip>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="32" />
                         <ColumnDefinition />
-                        <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
                     <Image Height="18" Source="{StaticResource collection}" />
                     <TextBlock
@@ -48,13 +94,21 @@
         <local:TreeNodeItemTemplateSelector.PartitionNodeDT>
             <DataTemplate DataType="{x:Type models:PartitionNode}">
                 <Grid Height="20">
+                    <Grid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete Partition">
+                                <MenuItem.Icon>
+                                    <Image Source="../Assets/Icons/partitionDelete16.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </Grid.ContextMenu>
                     <Grid.ToolTip>
                         <TextBlock Text="{Binding}" />
                     </Grid.ToolTip>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="32" />
                         <ColumnDefinition />
-                        <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
                     <Image Height="18" Source="{StaticResource partition}" />
                     <TextBlock

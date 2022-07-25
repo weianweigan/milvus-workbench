@@ -60,10 +60,10 @@
 		</Span>
 
 		<Keywords color="Keyword" >
-			<Word>&lt;</Word>
 			<Word>&lt;=</Word>
-			<Word>&gt;</Word>
 			<Word>&gt;=</Word>
+			<Word>&lt;</Word>
+			<Word>&gt;</Word>
 			<Word>==</Word>
 			<Word>!=</Word>
 			<Word>in</Word>			

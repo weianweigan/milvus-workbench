@@ -6,12 +6,18 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
+using CommunityToolkit.Mvvm.Input;
+using IO.Milvus.Param.Dml;
 
 namespace IO.Milvus.Workbench.Models
 {
     public class CollectionNode : Node<PartitionNode>
     {
         private List<FieldModel> _fields;
+        private AsyncRelayCommand _queryCmd;
+        private RelayCommand _resetCmd;
+        private string _queryText;
+        private List<FieldData> _queryResultData;
 
         public CollectionNode(
                     MilvusConnectionNode parent,
@@ -25,6 +31,7 @@ namespace IO.Milvus.Workbench.Models
             Id = id;
         }
 
+        #region Properties
         public MilvusConnectionNode Parent { get; }
 
         public long Id { get; set; }
@@ -33,7 +40,51 @@ namespace IO.Milvus.Workbench.Models
 
         public int ShardsNum { get; set; }
 
-        public List<FieldModel> Fields { get => _fields; set => SetProperty(ref _fields , value); }
+        public List<FieldModel> Fields { get => _fields; set => SetProperty(ref _fields, value); }
+
+        public List<FieldData> QueryResultData { get => _queryResultData; set => SetProperty(ref _queryResultData ,value); }
+
+        public string QueryText
+        {
+            get => _queryText; set
+            {
+                _queryText = value;
+                QueryCmd.NotifyCanExecuteChanged();
+            }
+        }
+
+        public AsyncRelayCommand QueryCmd { get => _queryCmd ?? (_queryCmd = new AsyncRelayCommand(QueryClickAsync, () => !string.IsNullOrWhiteSpace(QueryText))); }
+
+        public RelayCommand ResetCmd { get => _resetCmd ?? (_resetCmd = new RelayCommand(ResetClick,() => QueryResultData != null)); }
+
+        private void ResetClick()
+        {
+            QueryResultData = null;
+            ResetCmd.NotifyCanExecuteChanged();
+        }
+
+        private async Task QueryClickAsync()
+        {
+            if (string.IsNullOrWhiteSpace(QueryText))
+            {
+                MessageBox.Show("Please Input QueryText First");
+                return;
+            }
+
+            var r = await Parent.ServiceClient.QueryAsync(QueryParam.Create(Name,
+                Children.Select(p => p.Name).ToList(),
+                Fields.Select(p => p.Name).ToList(),
+                expr: QueryText));
+
+            if (r.Status != Param.Status.Success)
+            {
+                MessageBox.Show(r.Exception.Message);
+                return;
+            }
+
+            QueryResultData = r.Data.FieldsData.ToList();
+        }
+        #endregion
 
         public async Task ConnectAsync()
         {

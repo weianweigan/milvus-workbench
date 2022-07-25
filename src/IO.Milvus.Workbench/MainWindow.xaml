@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:IO.Milvus.Workbench"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:IO.Milvus.Workbench.DocumentViews"
     xmlns:viewmodels="clr-namespace:IO.Milvus.Workbench.ViewModels"
     Title="Milvus-Workbench"
     Width="1000"
@@ -27,7 +28,7 @@
             </ad:DockingManager.Theme>
             <ad:LayoutRoot>
                 <ad:LayoutPanel Orientation="Horizontal">
-                    <ad:LayoutAnchorablePane DockWidth="200">
+                    <ad:LayoutAnchorablePane DockWidth="300">
                         <ad:LayoutAnchorable
                             Title="Milvus Manager"
                             CanClose="False"
@@ -51,6 +52,7 @@
                                     Grid.Row="1"
                                     Background="Transparent"
                                     BorderThickness="0"
+                                    ItemContainerStyle="{StaticResource Milvus.TreeviewItem}"
                                     ItemsSource="{Binding MilvusManagerNode.Children}">
                                     <b:Interaction.Triggers>
                                         <b:EventTrigger EventName="MouseDoubleClick">
@@ -69,7 +71,11 @@
                     <ad:LayoutPanel Orientation="Vertical">
                         <ad:LayoutDocumentPane x:Name="documentPane" IsMaximized="True">
                             <ad:LayoutDocument Title="Start Page" CanClose="True">
-                                  三维窗口  
+                                <Frame>
+                                    <Frame.Content>
+                                        <pages:StartPage/>
+                                    </Frame.Content>
+                                </Frame> 
                             </ad:LayoutDocument>
                         </ad:LayoutDocumentPane>
                     </ad:LayoutPanel>

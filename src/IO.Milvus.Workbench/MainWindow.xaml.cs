@@ -15,8 +15,14 @@ namespace IO.Milvus.Workbench
         {
             InitializeComponent();
             DataContext = (VM = new MainWindowViewModel(documentPane));
+            Loaded += MainWindow_Loaded;
         }
 
-
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= MainWindow_Loaded;
+            
+            await VM.LoadMilvusInstanceConfigAsync();
+        }
     }
 }

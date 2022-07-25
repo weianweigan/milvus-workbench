@@ -1321,7 +1321,7 @@ namespace IO.Milvus.Client
                     CollectionName = requestParam.CollectionName,
                     Expr = requestParam.Expr,
                     GuaranteeTimestamp = requestParam.GuaranteeTimestamp,
-                    TravelTimestamp = requestParam.TravelTimestamp,                    
+                    TravelTimestamp = requestParam.TravelTimestamp,                   
                 };
 
                 request.OutputFields.AddRange(requestParam.OutFields);

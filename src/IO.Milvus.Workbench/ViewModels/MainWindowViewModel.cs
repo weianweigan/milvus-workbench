@@ -83,9 +83,29 @@ namespace IO.Milvus.Workbench.ViewModels
 
                 await milvus.ConnectAsync();
             }
+
+            //Save Config
+            await MilvusManagerNode.SaveAsync();
         }
 
         public RelayCommand DeleteCmd { get; set; }
+
         public LayoutDocumentPane DocumentPane { get; }
+
+        internal async Task LoadMilvusInstanceConfigAsync()
+        {
+            var configs = await MilvusManagerNode.ReadConfigAsync();
+
+            foreach (var config in configs)
+            {
+                var milvus = new MilvusConnectionNode(
+                    config.Name,
+                    config.Host,
+                    config.Port);
+                MilvusManagerNode.Children.Add(milvus);
+
+                await milvus.ConnectAsync();
+            }
+        }
     }
 }
