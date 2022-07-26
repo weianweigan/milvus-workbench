@@ -12,22 +12,36 @@
                 <Grid Height="20">
                     <Grid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Connect Milvus">
+                            <MenuItem Command="{Binding ConnectCmd}" Header="Connect/Reload Milvus">
+                                <MenuItem.Style>
+                                    <Style TargetType="MenuItem">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding State}" Value="{x:Static models:NodeState.Success}">
+                                                <Setter Property="Icon">
+                                                    <Setter.Value>
+                                                        <Image Source="../Assets/Icons/milvusRefresh16.png" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Header" Value="Reload Milvus" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </MenuItem.Style>
                                 <MenuItem.Icon>
                                     <Image Source="../Assets/Icons/milvusConnect16.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Disconnect Milvus">
+                            <MenuItem Command="{Binding DisconnectCmd}" Header="Disconnect Milvus">
                                 <MenuItem.Icon>
                                     <Image Source="../Assets/Icons/milvusDisconnect16.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Delete">
+                            <MenuItem Command="{Binding DeleteCmd}" Header="Delete">
                                 <MenuItem.Icon>
                                     <Image Source="../Assets/Icons/milvusDelete16.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Add Collection">
+                            <MenuItem Command="{Binding CreateCollectionCmd}" Header="Create Collection">
                                 <MenuItem.Icon>
                                     <Image Source="../Assets/Icons/milvusAddCollection16.png" />
                                 </MenuItem.Icon>
@@ -42,6 +56,48 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Image Height="20" Source="{StaticResource milvus32}" />
+                    <Ellipse
+                        Name="ConnectionStatePoint"
+                        Width="5"
+                        Height="5"
+                        Margin="0,0,5,5"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static models:NodeState.Success}">
+                                        <Setter Property="Fill" Value="Green" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static models:NodeState.Error}">
+                                        <Setter Property="Fill" Value="Red" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static models:NodeState.Closed}">
+                                        <Setter Property="Fill" Value="Red" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static models:NodeState.Connecting}">
+                                        <Setter Property="Fill" Value="Yellow" />
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard x:Name="Flash">
+                                                <Storyboard>
+                                                    <DoubleAnimation
+                                                        AutoReverse="True"
+                                                        RepeatBehavior="Forever"
+                                                        Storyboard.TargetProperty="Opacity"
+                                                        From="1.0"
+                                                        To="0.0"
+                                                        Duration="0:0:1" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <StopStoryboard BeginStoryboardName="Flash" />
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
                     <TextBlock
                         Grid.Column="1"
                         VerticalAlignment="Center"
@@ -54,17 +110,17 @@
                 <Grid Height="20">
                     <Grid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Load Collection">
+                            <MenuItem Command="{Binding LoadCollectionCmd}" Header="Load Collection">
                                 <MenuItem.Icon>
                                     <Image Source="../Assets/Icons/collectionLoad16.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Release Collection">
+                            <MenuItem Command="{Binding ReleaseCollectionCmd}" Header="Release Collection">
                                 <MenuItem.Icon>
                                     <Image Source="../Assets/Icons/collectionRelease16.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Delete Collection">
+                            <MenuItem Command="{Binding DropCollectionCmd}" Header="Drop Collection">
                                 <MenuItem.Icon>
                                     <Image Source="../Assets/Icons/collectionDelete16.png" />
                                 </MenuItem.Icon>

@@ -11,6 +11,13 @@ using IO.Milvus.Param.Dml;
 
 namespace IO.Milvus.Workbench.Models
 {
+    public enum LoadedState
+    {
+        Unknown,
+        Loading,
+        Loaded,
+    }
+
     public class CollectionNode : Node<PartitionNode>
     {
         private List<FieldModel> _fields;
@@ -18,6 +25,12 @@ namespace IO.Milvus.Workbench.Models
         private RelayCommand _resetCmd;
         private string _queryText;
         private List<FieldData> _queryResultData;
+        private LoadedState _loadedState;
+        private List<string> _alias;
+        private AsyncRelayCommand _loadCollectionCmd;
+        private AsyncRelayCommand _releaseCollectionCmd;
+        private AsyncRelayCommand _dropCollectionCmd;
+        private AsyncRelayCommand _createPartitionCmd;
 
         public CollectionNode(
                     MilvusConnectionNode parent,
@@ -40,9 +53,13 @@ namespace IO.Milvus.Workbench.Models
 
         public int ShardsNum { get; set; }
 
+        public LoadedState LoadedState { get => _loadedState; set => SetProperty(ref _loadedState, value); }
+
         public List<FieldModel> Fields { get => _fields; set => SetProperty(ref _fields, value); }
 
-        public List<FieldData> QueryResultData { get => _queryResultData; set => SetProperty(ref _queryResultData ,value); }
+        public List<string> Aliases { get => _alias; set => SetProperty(ref _alias, value); }
+
+        public List<FieldData> QueryResultData { get => _queryResultData; set => SetProperty(ref _queryResultData, value); }
 
         public string QueryText
         {
@@ -53,14 +70,64 @@ namespace IO.Milvus.Workbench.Models
             }
         }
 
+        public AsyncRelayCommand LoadCollectionCmd { get => _loadCollectionCmd ?? (_loadCollectionCmd = new AsyncRelayCommand(LoadCollectionClickAsync)); }
+
+        public AsyncRelayCommand ReleaseCollectionCmd { get => _releaseCollectionCmd ?? (_releaseCollectionCmd = new AsyncRelayCommand(ReleaseCollectionClickAsync)); }
+
+        public AsyncRelayCommand DropCollectionCmd { get => _dropCollectionCmd ?? (_dropCollectionCmd = new AsyncRelayCommand(DropCollectionClickAsync)); }
+
+        public AsyncRelayCommand CreatePartitionCmd { get => _createPartitionCmd ?? (_createPartitionCmd = new AsyncRelayCommand(CreatePartitionClickAsync));}
+
         public AsyncRelayCommand QueryCmd { get => _queryCmd ?? (_queryCmd = new AsyncRelayCommand(QueryClickAsync, () => !string.IsNullOrWhiteSpace(QueryText))); }
 
-        public RelayCommand ResetCmd { get => _resetCmd ?? (_resetCmd = new RelayCommand(ResetClick,() => QueryResultData != null)); }
+        public RelayCommand ResetCmd { get => _resetCmd ?? (_resetCmd = new RelayCommand(ResetClick, () => QueryResultData != null)); }
 
         private void ResetClick()
         {
             QueryResultData = null;
             ResetCmd.NotifyCanExecuteChanged();
+        }
+
+        private async Task DropCollectionClickAsync()
+        {
+            var res = MessageBox.Show($"Are you sure delete:{Name}?","Delete",MessageBoxButton.OKCancel,MessageBoxImage.Warning);
+            if (res != MessageBoxResult.OK)
+            {
+                return;
+            }
+            try
+            {
+                var r = Parent.ServiceClient.DropCollection(Name);
+                if (r.Status != Param.Status.Success)
+                {
+                    MessageBox.Show(r.Exception.Message);
+                }
+
+               await Parent.RefreshAsync();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }            
+        }
+
+        private async Task LoadCollectionClickAsync()
+        {
+            LoadedState = LoadedState.Loading;
+            var r = await Parent.ServiceClient.LoadCollectionAsync(LoadCollectionParam.Create(Name));
+
+            //TODO Query Load State
+
+        }
+
+        private async Task CreatePartitionClickAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        private Task ReleaseCollectionClickAsync()
+        {
+            throw new NotImplementedException();
         }
 
         private async Task QueryClickAsync()
@@ -100,11 +167,13 @@ namespace IO.Milvus.Workbench.Models
             Description = r.Data.Schema.Description;
             ShardsNum = r.Data.ShardsNum;
 
+            Aliases = r.Data.Aliases.ToList();
+
             //Query Partition
             var allPartitionR = await Task.Run(() => Parent.ServiceClient.ShowPartitions(ShowPartitionsParam.Create(Name, null)));
 
             if (allPartitionR.Status != Param.Status.Success)
-            {                
+            {
                 State = NodeState.Error;
                 return;
             }
@@ -114,8 +183,8 @@ namespace IO.Milvus.Workbench.Models
                 var partition = new PartitionNode(
                     allPartitionR.Data.PartitionNames[i],
                     allPartitionR.Data.PartitionIDs[i]);
-                
-                 Children.Add(partition);                
+
+                Children.Add(partition);
             }
 
             var fields = new List<FieldModel>();

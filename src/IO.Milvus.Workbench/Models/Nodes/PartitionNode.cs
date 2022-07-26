@@ -4,6 +4,8 @@ namespace IO.Milvus.Workbench.Models
 {
     public class PartitionNode : Node
     {
+        private LoadedState _loadedState;
+
         public PartitionNode(string name, long id)
         {
             Name = name;
@@ -11,6 +13,8 @@ namespace IO.Milvus.Workbench.Models
         }
 
         public long ID { get; }
+
+        public LoadedState LoadedState { get => _loadedState; set => SetProperty(ref _loadedState , value); }
 
         public override IEnumerable<Node> GetChildren()
         {

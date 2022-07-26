@@ -15,10 +15,10 @@
         <Setter Property="ItemTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Title}"/>
+                    <TextBlock Text="{Binding Title}" />
                 </DataTemplate>
-            </Setter.Value>    
+            </Setter.Value>
         </Setter>
-        
+
     </Style>
 </ResourceDictionary>

@@ -52,7 +52,16 @@ namespace IO.Milvus.Workbench.Models
 
         public ObservableCollection<TChild> Children { get; set; } = new ObservableCollection<TChild>();
 
-        public NodeState State { get => _state; set => _state = value; }
+        public NodeState State
+        {
+            get => _state; set
+            {
+                SetProperty(ref _state, value);
+                OnStateChanged();
+            }
+        }
+
+        protected virtual void OnStateChanged() { }
 
         public override IEnumerable<Node> GetChildren()
         {

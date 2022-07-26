@@ -4,7 +4,7 @@
     xmlns:converter="clr-namespace:IO.Milvus.Workbench.Converter"
     xmlns:models="clr-namespace:IO.Milvus.Workbench.Models">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="./Icons.xaml"/>
+        <ResourceDictionary Source="./Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <Style x:Key="Milvus.TreeviewItem" TargetType="{x:Type TreeViewItem}">
         <Setter Property="MinHeight" Value="25" />

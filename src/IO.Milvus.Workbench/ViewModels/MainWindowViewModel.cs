@@ -38,7 +38,7 @@ namespace IO.Milvus.Workbench.ViewModels
 
         public RelayCommand OpenPageCmd { get => _openPageCmd ?? (_openPageCmd = new RelayCommand(OpenClick)); }
 
-        public RelayCommand OpenVectorSearchPageCmd { get => _openVectorSearchPageCmd ?? (_openVectorSearchPageCmd = new RelayCommand(OpenVectorSearchPageClick,() => MilvusManagerNode.Children.IsNotEmpty())); }
+        public RelayCommand OpenVectorSearchPageCmd { get => _openVectorSearchPageCmd ?? (_openVectorSearchPageCmd = new RelayCommand(OpenVectorSearchPageClick, () => MilvusManagerNode.Children.IsNotEmpty())); }
         #endregion
 
         #region Private Methods
@@ -85,6 +85,7 @@ namespace IO.Milvus.Workbench.ViewModels
             if (dialog.ShowDialog() == true)
             {
                 var milvus = new MilvusConnectionNode(
+                    MilvusManagerNode,
                     dialog.Vm.Name,
                     dialog.Vm.Host,
                     dialog.Vm.Port);
@@ -126,6 +127,7 @@ namespace IO.Milvus.Workbench.ViewModels
             foreach (var config in configs)
             {
                 var milvus = new MilvusConnectionNode(
+                    MilvusManagerNode,
                     config.Name,
                     config.Host,
                     config.Port);

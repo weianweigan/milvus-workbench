@@ -1,9 +1,5 @@
 ﻿using IO.Milvus.Workbench.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using IO.Milvus.Workbench.Models.Fields;
 using System.Windows;
 using System.Windows.Controls;
 

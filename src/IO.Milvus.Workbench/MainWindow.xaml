@@ -42,7 +42,6 @@
                                 <ToolBar
                                     Background="Transparent"
                                     BorderThickness="0"
-                                    ToolBar.OverflowMode="AsNeeded"
                                     ToolBarTray.IsLocked="True">
                                     <Button Command="{Binding AddCmd}" ToolTip="Add Milvus Instance">
                                         <Image Source="{StaticResource addDatabase16}" />
@@ -50,6 +49,7 @@
                                     <Button Command="{Binding OpenVectorSearchPageCmd}" ToolTip="Open Vector Search Page">
                                         <Image Source="{StaticResource vectorSearch16}" />
                                     </Button>
+                                    <Separator/>
                                 </ToolBar>
                                 <TreeView
                                     Grid.Row="1"
@@ -85,6 +85,13 @@
                 </ad:LayoutPanel>
             </ad:LayoutRoot>
         </ad:DockingManager>
-        <StatusBar Grid.Row="2" />
+        <StatusBar Grid.Row="2" >
+            <StatusBarItem>
+                <Image/>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock/>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>

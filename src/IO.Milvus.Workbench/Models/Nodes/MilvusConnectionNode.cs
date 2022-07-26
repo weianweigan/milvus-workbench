@@ -1,23 +1,32 @@
-﻿using IO.Milvus.Client;
+﻿using CommunityToolkit.Mvvm.Input;
+using IO.Milvus.Client;
 using IO.Milvus.Param;
 using IO.Milvus.Param.Collection;
 using IO.Milvus.Utils;
-using System.Collections.Generic;
+using IO.Milvus.Workbench.Dialogs;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace IO.Milvus.Workbench.Models
 {
-    //TODO: Fix JsonIngnore in net461
-    public class MilvusConnectionNode : Node<CollectionNode>,IEqualityComparer<MilvusConnectionNode>
+    public class MilvusConnectionNode : Node<CollectionNode>
     {
+        private AsyncRelayCommand _deleteCmd;
+        private RelayCommand _disconnectCmd;
+        private AsyncRelayCommand _connectCmd;
+        private AsyncRelayCommand _createCollectionCmd;
 
-        public MilvusConnectionNode(string name, string host, int port)
+        public MilvusConnectionNode(MilvusManagerNode parent, string name, string host, int port)
         {
             Name = name;
+            Parent = parent;
             Host = host;
             Port = port;
         }
+
+        public MilvusManagerNode Parent { get; }
 
         public string Host { get; set; }
 
@@ -29,9 +38,91 @@ namespace IO.Milvus.Workbench.Models
 
         public string Url => $"{Host}:{Port}";
 
+        public AsyncRelayCommand DeleteCmd { get => _deleteCmd ?? (_deleteCmd = new AsyncRelayCommand(DeleteClickAsync)); }
+
+        public RelayCommand DisconnectCmd { get => _disconnectCmd ?? (_disconnectCmd = new RelayCommand(DisconnectClick, () => State == NodeState.Success)); }
+
+        public AsyncRelayCommand ConnectCmd { get => _connectCmd ?? (_connectCmd = new AsyncRelayCommand(RefreshAsync, () => State.CanConnect())); }
+
+        public AsyncRelayCommand CreateCollectionCmd { get => _createCollectionCmd ?? (_createCollectionCmd = new AsyncRelayCommand(CreateCollectionClickAsync, () => State == NodeState.Success)); }
+
+        private async Task CreateCollectionClickAsync()
+        {
+            //Input collection name
+            var dialog = new CreateCollectionDialog(DisplayName);
+            if (dialog.ShowDialog() == true)
+            {
+                //Check if collection existed
+                bool has = Children.Any(p => p.Name == dialog.Vm.Name);
+                if (has)
+                {
+                    MessageBox.Show($"{dialog.Vm.Name} Exist");
+                    return;
+                }
+
+                try
+                {
+                    var param = CreateCollectionParam.Create(
+                        dialog.Vm.Name,
+                        2,
+                        dialog.Vm.Fields.Select(p => p.ToFieldType()),
+                        dialog.Vm.Description);
+
+                    var r = ServiceClient.CreateCollection(param);
+
+                    if (r.Status != Status.Success)
+                    {
+                        MessageBox.Show(r.Exception.Message);
+                    }
+
+                    await RefreshAsync();
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        public async Task RefreshAsync()
+        {
+            DisconnectClick();
+
+            await ConnectAsync();
+        }
+
+        private void DisconnectClick()
+        {
+            Children.Clear();
+            if (State == NodeState.Success)
+            {
+                ServiceClient?.Close();
+            }
+            ServiceClient = null;
+
+            State = NodeState.Closed;
+        }
+
+        protected override void OnStateChanged()
+        {
+            DisconnectCmd.NotifyCanExecuteChanged();
+            ConnectCmd.NotifyCanExecuteChanged();
+            CreateCollectionCmd.NotifyCanExecuteChanged();
+        }
+
+        private async Task DeleteClickAsync()
+        {
+            Children.Clear();
+            ServiceClient?.Close();
+
+            Parent.Children.Remove(this);
+
+            await Parent.SaveAsync();
+        }
+
         public async Task ConnectAsync()
         {
-            Application.Current.Dispatcher.Invoke(() => State = NodeState.Connecting);
+            State = NodeState.Connecting;
 
             try
             {
@@ -44,14 +135,23 @@ namespace IO.Milvus.Workbench.Models
                 var connect = ConnectParam.Create(Host, Port);
                 ServiceClient = new MilvusServiceClient(connect);
 
-                var r = ServiceClient.ShowCollections(ShowCollectionsParam.Create(null, Grpc.ShowType.All));
+                if (!ServiceClient.ClientIsReady())
+                {
+                    State = NodeState.Error;
+                    Msg = $"Client is Not Ready";
+                    return;
+                }
+
+                var r = await Task.Run(() =>
+                {
+                    return ServiceClient.ShowCollections(ShowCollectionsParam.Create(null, Grpc.ShowType.All));
+                });
+
                 if (r.Status != Status.Success)
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        State = NodeState.Error;
-                        Msg = $"{r.Status}: {r.Exception.Message}";
-                    });
+                    State = NodeState.Error;
+                    Msg = $"{r.Status}: {r.Exception.Message}";
+                    return;
                 }
 
                 if (r.Data.CollectionNames.IsEmpty())
@@ -67,37 +167,24 @@ namespace IO.Milvus.Workbench.Models
                         r.Data.CollectionIds[i],
                         r.Data.CreatedTimestamps[i],
                         r.Data.CreatedUtcTimestamps[i]);
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        Children.Add(collectionNode);
-                    });
+
+                    Children.Add(collectionNode);
 
                     await collectionNode.ConnectAsync();
                 }
+
+                State = NodeState.Success;
             }
             catch (System.Exception ex)
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    State = NodeState.Error;
-                    Msg = ex.Message;
-                });
+                State = NodeState.Error;
+                Msg = ex.Message;
             }
-        }
-
-        public bool Equals(MilvusConnectionNode x, MilvusConnectionNode y)
-        {
-            return x.Url == y.Url;
-        }
-
-        public int GetHashCode(MilvusConnectionNode obj)
-        {
-            return obj.Url.GetHashCode();
         }
 
         public override string ToString()
         {
-            return DisplayName;
+            return State == NodeState.Success ? DisplayName : Msg;
         }
     }
 }
