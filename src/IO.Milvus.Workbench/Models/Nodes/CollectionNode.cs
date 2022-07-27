@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.Input;
 using IO.Milvus.Param.Dml;
+using IO.Milvus.Workbench.Dialogs;
 
 namespace IO.Milvus.Workbench.Models
 {
@@ -122,7 +123,18 @@ namespace IO.Milvus.Workbench.Models
 
         private async Task CreatePartitionClickAsync()
         {
-            throw new NotImplementedException();
+            var dialog = new CreatePartitionDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                var r = await Task.Run(() =>
+                {
+                    return Parent.ServiceClient.CreatePartition(CreatePartitionParam.Create(
+                    Name,
+                    dialog.VM.PartitionName));
+                });
+
+                //TODO:Validate
+            }
         }
 
         private Task ReleaseCollectionClickAsync()
@@ -181,6 +193,7 @@ namespace IO.Milvus.Workbench.Models
             for (int i = 0; i < allPartitionR.Data.PartitionNames.Count; i++)
             {
                 var partition = new PartitionNode(
+                    this,
                     allPartitionR.Data.PartitionNames[i],
                     allPartitionR.Data.PartitionIDs[i]);
 

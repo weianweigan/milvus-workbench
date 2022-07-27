@@ -8,10 +8,9 @@ using System.Windows;
 
 namespace IO.Milvus.Workbench.ViewModels
 {
-    public class CreateCollectionDialogViewModel : ObservableObject
+
+    public class CreateCollectionDialogViewModel : DialogViewModel
     {
-        private RelayCommand _addCmd;
-        private RelayCommand _canacelCmd;
         private RelayCommand _addFieldComd;
         private RelayCommand<Field> _removeFieldCmd;
 
@@ -19,8 +18,6 @@ namespace IO.Milvus.Workbench.ViewModels
         {
             Title = connectionName;
         }
-
-        public Action<bool> CloseAction { get; internal set; }
 
         public string Name { get; set; }
 
@@ -37,11 +34,7 @@ namespace IO.Milvus.Workbench.ViewModels
         public RelayCommand AddFieldComd { get => _addFieldComd ?? (_addFieldComd = new RelayCommand(AddFieldClick)); }
 
         public RelayCommand<Field> RemoveFieldCmd { get => _removeFieldCmd ?? (_removeFieldCmd = new RelayCommand<Field>(RemoveFieldClick)); }
-
-        public RelayCommand AddCmd { get => _addCmd = (_addCmd = new RelayCommand(AddClick)); }
-
-        public RelayCommand CanacelCmd { get => _canacelCmd = (_canacelCmd = new RelayCommand(CancelClick)); }
-
+     
         private void RemoveFieldClick(Field obj)
         {
             Fields.Remove(obj);
@@ -52,12 +45,7 @@ namespace IO.Milvus.Workbench.ViewModels
             Fields.Add(new DefaultField());
         }
 
-        private void CancelClick()
-        {
-            CloseAction?.Invoke(false);
-        }
-
-        private void AddClick()
+        protected override void AddClick()
         {
             if (string.IsNullOrWhiteSpace(Name))
             {

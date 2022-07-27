@@ -60,16 +60,35 @@ namespace IO.Milvus.Workbench.ViewModels
             }
 
 
-            if (SelectedNode is CollectionNode node)
+            if (SelectedNode is CollectionNode collectionNode)
             {
                 var newDocPage = new LayoutDocument()
                 {
-                    Title = node.Name,
+                    Title = collectionNode.Name,
                     Content = new Frame()
                     {
                         Content = new CollectionPage()
                         {
-                            DataContext = node,
+                            DataContext = collectionNode,
+                        }
+                    },
+                };
+
+                DocumentPane.Children.Add(newDocPage);
+                newDocPage.IsActive = true;
+            }else if (SelectedNode is PartitionNode partitionNode)
+            {
+                var newDocPage = new LayoutDocument()
+                {
+                    Title = partitionNode.Name,
+                    Content = new Frame()
+                    {
+                        Content = new ImportDataPage()
+                        {
+                            DataContext = new ImportDataPageViewModel(
+                                partitionNode.Parent.Parent,
+                                partitionNode.Parent,
+                                partitionNode),
                         }
                     },
                 };
