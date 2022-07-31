@@ -10,9 +10,10 @@
     Width="500"
     Height="300"
     d:DataContext="{d:DesignInstance Type=viewmodels:AddMilvusDailogViewModel}"
-    Icon="{StaticResource addDatabase16}"
-    WindowStartupLocation="CenterOwner"
     FocusManager.FocusedElement="{Binding ElementName=YesBtn}"
+    Icon="{StaticResource addDatabase16}"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
@@ -81,8 +82,8 @@
                 <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
             <Button
-                Grid.Column="1"
                 Name="YesBtn"
+                Grid.Column="1"
                 Width="75"
                 Height="23"
                 Command="{Binding AddCmd}"

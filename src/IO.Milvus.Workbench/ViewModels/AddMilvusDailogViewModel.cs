@@ -6,29 +6,20 @@ using System.Windows;
 
 namespace IO.Milvus.Workbench.ViewModels
 {
-    public class AddMilvusDailogViewModel : ObservableObject
+    public class AddMilvusDailogViewModel : DialogViewModel
     {
-        private RelayCommand _addCmd;
-        private RelayCommand _canacelCmd;
-
         public string Name { get; set; } = "Test";
 
         public string Host { get; set; } = "192.168.100.139";
 
         public int Port { get; set; } = 19530;
 
-        public Action<bool> CloseAction { get;internal set; }
-
-        public RelayCommand AddCmd { get => _addCmd = (_addCmd = new RelayCommand(AddClick)); }
-
-        public RelayCommand CanacelCmd { get => _canacelCmd  = (_canacelCmd = new RelayCommand(CancelClick)); }
-
-        private void CancelClick()
+        protected override void CancelClick()
         {
             CloseAction?.Invoke(false);
         }
 
-        private void AddClick()
+        protected override void AddClick()
         {
             if (!IPValidationUtils.IsHost(Host))
             {
