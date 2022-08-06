@@ -46,13 +46,9 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
     <PackageReference Include="Dirkster.AvalonDock" Version="4.70.2" />
     <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.70.2" />
-    <!--<PackageReference Include="IO.Milvus" Version="2.0.0-alpha.2" />-->
+    <PackageReference Include="IO.Milvus" Version="2.0.0-alpha.2" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\IO.Milvus\IO.Milvus.csproj" />
   </ItemGroup>
 
   <ItemGroup>
