@@ -10,7 +10,7 @@ namespace IO.Milvus.Workbench.DocumentViews
 {
     public class FieldCompletionData : ICompletionData
     {
-        public FieldCompletionData(FieldModel field, DrawingImage _fieldImage)
+        public FieldCompletionData(MilvusFieldTypeModel field, DrawingImage _fieldImage)
         {
             Text = field.Name;
             Image = _fieldImage;

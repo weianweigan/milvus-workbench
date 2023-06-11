@@ -1,0 +1,92 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:themes="clr-namespace:IO.Milvus.Workbench.Themes">
+    <themes:MilvusParameterTemplateSelector x:Key="MilvusParameterTemplateSelector">
+        <themes:MilvusParameterTemplateSelector.AutoIdDataTemplate>
+            <DataTemplate>
+                <CheckBox
+                    VerticalAlignment="Center"
+                    Content="AutoId"
+                    IsChecked="{Binding AutoId}" />
+            </DataTemplate>
+        </themes:MilvusParameterTemplateSelector.AutoIdDataTemplate>
+        <themes:MilvusParameterTemplateSelector.DimensionDataTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Margin="5,0" Text="Dimension:" />
+                    <TextBox Grid.Column="1" Text="{Binding Dimension, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+            </DataTemplate>
+        </themes:MilvusParameterTemplateSelector.DimensionDataTemplate>
+        <themes:MilvusParameterTemplateSelector.MaxLengthDataTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Margin="5,0" Text="MaxLength:" />
+                    <TextBox Grid.Column="1" Text="{Binding MaxLength, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+            </DataTemplate>
+        </themes:MilvusParameterTemplateSelector.MaxLengthDataTemplate>
+        <themes:MilvusParameterTemplateSelector.NoneDataTemplate>
+            <DataTemplate>
+                <TextBlock />
+            </DataTemplate>
+        </themes:MilvusParameterTemplateSelector.NoneDataTemplate>
+    </themes:MilvusParameterTemplateSelector>
+
+    <themes:MilvusParameterTemplateSelector x:Key="ReadonlyMilvusParameterTemplateSelector">
+        <themes:MilvusParameterTemplateSelector.AutoIdDataTemplate>
+            <DataTemplate>
+                <CheckBox
+                    VerticalAlignment="Center"
+                    Content="AutoId"
+                    IsChecked="{Binding AutoId}" />
+            </DataTemplate>
+        </themes:MilvusParameterTemplateSelector.AutoIdDataTemplate>
+        <themes:MilvusParameterTemplateSelector.DimensionDataTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Margin="5,0" Text="Dimension:" />
+                    <TextBox
+                        Grid.Column="1"
+                        BorderThickness="0"
+                        IsReadOnly="True"
+                        Text="{Binding Dimension}" />
+                </Grid>
+            </DataTemplate>
+        </themes:MilvusParameterTemplateSelector.DimensionDataTemplate>
+        <themes:MilvusParameterTemplateSelector.MaxLengthDataTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Margin="5,0" Text="MaxLength:" />
+                    <TextBox
+                        Grid.Column="1"
+                        BorderThickness="0"
+                        IsReadOnly="True"
+                        Text="{Binding MaxLength}" />
+                </Grid>
+            </DataTemplate>
+        </themes:MilvusParameterTemplateSelector.MaxLengthDataTemplate>
+        <themes:MilvusParameterTemplateSelector.NoneDataTemplate>
+            <DataTemplate>
+                <TextBlock />
+            </DataTemplate>
+        </themes:MilvusParameterTemplateSelector.NoneDataTemplate>
+    </themes:MilvusParameterTemplateSelector>
+</ResourceDictionary>

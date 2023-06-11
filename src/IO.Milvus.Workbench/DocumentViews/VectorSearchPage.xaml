@@ -7,9 +7,10 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:IO.Milvus.Workbench.DocumentViews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:IO.Milvus.Workbench.Models"
     xmlns:viewmodels="clr-namespace:IO.Milvus.Workbench.ViewModels"
     Title="VectorSearchPage"
-    d:DataContext="{d:DesignInstance Type=viewmodels:VectorSearchViewModel}"
+    d:DataContext="{d:DesignInstance Type=models:CollectionNode}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -19,7 +20,7 @@
             <RowDefinition Height="150" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <GroupBox Margin="5" Header="1. Enter vector value (dimension: 128)">
+        <GroupBox Margin="5" Header="1.Please Enter query vector value">
             <avalonEdit:TextEditor
                 Name="vectorTextEditor"
                 MinHeight="23"
@@ -32,102 +33,16 @@
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                 SyntaxHighlighting="milvusquery">
                 <i:Interaction.Behaviors>
-                    <local:AvalonEditBehavior InputText="{Binding QueryText}" />
+                    <local:AvalonEditBehavior InputText="{Binding SearchVector}" />
                 </i:Interaction.Behaviors>
             </avalonEdit:TextEditor>
         </GroupBox>
         <Grid Grid.Row="1">
             <UniformGrid Columns="2">
-                <GroupBox Margin="5" Header="2. Choose collection and field">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            Margin="0,0,10,0"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Text="Choose Milvus:" />
-                        <ComboBox
-                            Grid.Column="1"
-                            Height="23"
-                            ItemsSource="{Binding MilvusManagerNode.Children}"
-                            SelectedItem="{Binding SelectedMilvusNode}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Height="16" Source="{StaticResource milvus32}" />
-                                        <TextBlock Grid.Column="1" Text="{Binding DisplayName}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        <TextBlock
-                            Grid.Row="1"
-                            Margin="0,0,10,0"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Text="Choose Collection:" />
-                        <ComboBox
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Height="23"
-                            ItemsSource="{Binding SelectedMilvusNode.Children}"
-                            SelectedItem="{Binding SelectedCollectionNode}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="25" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Height="16" Source="{StaticResource collection}" />
-                                        <TextBlock Grid.Column="1" Text="{Binding Name}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        <TextBlock
-                            Grid.Row="2"
-                            Margin="0,0,10,0"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Text="Choose Field:" />
-                        <ComboBox
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            Height="23"
-                            ItemsSource="{Binding SelectedCollectionNode.Fields}"
-                            SelectedItem="{Binding SelectedField}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="25" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Height="16" Source="{StaticResource field}" />
-                                        <TextBlock Grid.Column="1" Text="{Binding Name}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </Grid>
-                </GroupBox>
                 <GroupBox
-                    Grid.Column="1"
+                    Grid.Column="0"
                     Margin="5"
-                    Header="3. Set search parameters">
+                    Header="2. Set search parameters">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -153,7 +68,8 @@
                         <TextBox
                             Grid.Row="1"
                             Grid.Column="1"
-                            Height="23" />
+                            Height="23"
+                            Text="{Binding Nprobe}" />
                         <TextBlock
                             Grid.Row="2"
                             Margin="0,0,10,0"
@@ -163,7 +79,58 @@
                         <TextBox
                             Grid.Row="2"
                             Grid.Column="1"
-                            Height="23" />
+                            Height="23"
+                            Text="{Binding RoundDecimal}" />
+                    </Grid>
+                </GroupBox>
+                <GroupBox
+                    Grid.Column="1"
+                    Margin="5"
+                    Header="3. TopK">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Margin="0,0,10,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Text="TopK" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Margin="0,0,10,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Text="Choose Field:" />
+                        <TextBox
+                            Grid.Column="1"
+                            Height="23"
+                            Text="{Binding TopK}" />
+                        <ComboBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Height="23"
+                            ItemsSource="{Binding SearchFields}"
+                            SelectedItem="{Binding SelectedField}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="25" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Height="16" Source="{StaticResource field}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Name}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </GroupBox>
             </UniformGrid>
@@ -175,25 +142,13 @@
             </Grid.RowDefinitions>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width=" 100" />
                     <ColumnDefinition />
                     <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="85" />
                 </Grid.ColumnDefinitions>
-                <ComboBox
-                    Height="23"
-                    Margin="5,0,0,0"
-                    SelectedIndex="1">
-                    <ComboBoxItem>TopK50</ComboBoxItem>
-                    <ComboBoxItem>TopK100</ComboBoxItem>
-                    <ComboBoxItem>TopK150</ComboBoxItem>
-                    <ComboBoxItem>TopK200</ComboBoxItem>
-                    <ComboBoxItem>TopK250</ComboBoxItem>
-                </ComboBox>
                 <avalonEdit:TextEditor
                     Name="filterTextEditor"
-                    Grid.Column="1"
                     MinHeight="23"
                     Margin="5,10,22,10"
                     BorderBrush="Gray"
@@ -204,7 +159,7 @@
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                     SyntaxHighlighting="milvusquery">
                     <i:Interaction.Behaviors>
-                        <local:AvalonEditBehavior InputText="{Binding QueryText}" />
+                        <local:AvalonEditBehavior InputText="{Binding SearchText}" />
                     </i:Interaction.Behaviors>
                 </avalonEdit:TextEditor>
                 <Button
@@ -216,22 +171,28 @@
                     <Image Source="{StaticResource filter}" />
                 </Button>
                 <Button
-                    Grid.Column="2"
+                    Grid.Column="1"
                     Width="75"
                     Height="23"
                     Content="TimeTravel" />
                 <Button
-                    Grid.Column="3"
+                    Grid.Column="2"
                     Width="75"
                     Height="23"
                     Content="Reset" />
                 <Button
-                    Grid.Column="4"
+                    Grid.Column="3"
                     Width="75"
                     Height="23"
+                    Command="{Binding SearchCmd}"
+                    CommandParameter="{Binding ElementName=_searchListView}"
                     Content="Search" />
             </Grid>
-            <ListView Grid.Row="1" Margin="5" />
+            <ListView
+                Name="_searchListView"
+                Grid.Row="1"
+                Margin="5"
+                ItemsSource="{Binding SearchResultData}" />
         </Grid>
     </Grid>
 </Page>

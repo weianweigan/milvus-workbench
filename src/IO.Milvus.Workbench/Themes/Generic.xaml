@@ -6,5 +6,7 @@
         <ResourceDictionary Source="./ContextMenu.xaml" />
         <ResourceDictionary Source="./Expander.xaml" />
         <ResourceDictionary Source="./GroupBox.xaml" />
+        <ResourceDictionary Source="./Converters.xaml" />
+        <ResourceDictionary Source="./MilvusParameterTemplateSelector.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

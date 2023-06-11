@@ -32,7 +32,7 @@ namespace IO.Milvus.Workbench.DocumentViews
         private void TextArea_TextEntered(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
             var collectionNode = DataContext as CollectionNode;
-            if (collectionNode == null || collectionNode.Fields.IsEmpty())
+            if (collectionNode == null || collectionNode.Fields?.Any() != true)
             {
                 return;
             }

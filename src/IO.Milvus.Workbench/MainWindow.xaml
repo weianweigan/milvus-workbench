@@ -16,6 +16,9 @@
     Icon="{StaticResource milvus32}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary Source="./Themes/Generic.xaml" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0" />
@@ -49,7 +52,7 @@
                                     <Button Command="{Binding OpenVectorSearchPageCmd}" ToolTip="Open Vector Search Page">
                                         <Image Source="{StaticResource vectorSearch16}" />
                                     </Button>
-                                    <Separator/>
+                                    <Separator />
                                 </ToolBar>
                                 <TreeView
                                     Grid.Row="1"
@@ -59,7 +62,7 @@
                                     ItemsSource="{Binding MilvusManagerNode.Children}">
                                     <b:Interaction.Triggers>
                                         <b:EventTrigger EventName="MouseDoubleClick">
-                                            <b:InvokeCommandAction Command="{Binding OpenPageCmd}" />
+                                            <b:InvokeCommandAction Command="{Binding OpenCommand}" />
                                         </b:EventTrigger>
                                     </b:Interaction.Triggers>
                                     <TreeView.ItemTemplate>
@@ -85,12 +88,12 @@
                 </ad:LayoutPanel>
             </ad:LayoutRoot>
         </ad:DockingManager>
-        <StatusBar Grid.Row="2" >
+        <StatusBar Grid.Row="2">
             <StatusBarItem>
-                <Image/>
+                <Image />
             </StatusBarItem>
             <StatusBarItem>
-                <TextBlock/>
+                <TextBlock />
             </StatusBarItem>
         </StatusBar>
     </Grid>

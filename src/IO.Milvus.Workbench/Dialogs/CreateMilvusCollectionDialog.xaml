@@ -1,0 +1,229 @@
+﻿<Window
+    x:Class="IO.Milvus.Workbench.Dialogs.CreateMilvusCollectionDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:IO.Milvus.Workbench.Converter"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:IO.Milvus.Workbench.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:milvus="clr-namespace:IO.Milvus;assembly=IO.Milvus"
+    xmlns:themes="clr-namespace:IO.Milvus.Workbench.Themes"
+    xmlns:viewmodels="clr-namespace:IO.Milvus.Workbench.ViewModels"
+    Title="{Binding Title}"
+    Width="600"
+    Height="500"
+    d:DataContext="{d:DesignInstance Type=viewmodels:CreateMilvusCollectionDialogViewModel}"
+    Icon="{StaticResource collection}"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/IO.Milvus.Workbench;component/Themes/Generic.xaml" />
+                <ResourceDictionary>
+                    <Style x:Key="RightTextBlock" TargetType="TextBlock">
+                        <Setter Property="HorizontalAlignment" Value="Right" />
+                        <Setter Property="Margin" Value="0,0,10,0" />
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="241*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Style="{StaticResource RightTextBlock}"
+                Text="Name:" />
+            <TextBox
+                Grid.Column="1"
+                Margin="10"
+                VerticalAlignment="Center"
+                Text="{Binding Name}" />
+            <TextBlock
+                Grid.Row="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Style="{StaticResource RightTextBlock}"
+                Text="Description:" />
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="10"
+                VerticalAlignment="Center"
+                Text="{Binding Description}" />
+            <Separator
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                VerticalAlignment="Bottom" />
+            <Grid
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="52" />
+                </Grid.ColumnDefinitions>
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <DataGrid
+                        AutoGenerateColumns="False"
+                        CanUserDeleteRows="False"
+                        CanUserSortColumns="False"
+                        ItemsSource="{Binding Fields}"
+                        SelectedItem="{Binding SelectedFieldType}">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Height" Value="23" />
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Name}"
+                                Header="Name" />
+                            <DataGridTemplateColumn Width="*" Header="DataType">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Image Margin="2,0" Visibility="{Binding IsPrimaryKey, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <Image.Source>
+                                                    <DrawingImage>
+                                                        <DrawingImage.Drawing>
+                                                            <DrawingGroup ClipGeometry="M0,0 V16 H16 V0 H0 Z">
+                                                                <DrawingGroup Opacity="1">
+                                                                    <GeometryDrawing Geometry="F1 M16,16z M0,0z M14.42,6.385A4.067,4.067,0,0,1,10.473,9.585A3.937,3.937,0,0,1,9.02,9.3L8,10.5 6.52,10.5 6.52,12.5 4.52,12.5 4.52,14.5 1.52,14.5 1.52,12.2 6.72,7A3.854,3.854,0,0,1,6.44,5.47A4.035,4.035,0,1,1,14.418,6.381z">
+                                                                        <GeometryDrawing.Brush>
+                                                                            <SolidColorBrush Opacity="0.1" Color="#FF212121" />
+                                                                        </GeometryDrawing.Brush>
+                                                                    </GeometryDrawing>
+                                                                    <GeometryDrawing Brush="#FF212121" Geometry="F1 M16,16z M0,0z M14.812,4.251A4.574,4.574,0,0,0,13.674,2.331A4.532,4.532,0,0,0,6.14,6.871L1.166,11.844 1.02,12.2 1.02,14.5 1.52,15 4.52,15 5.02,14.5 5.02,13 6.52,13 7.02,12.5 7.02,11 8,11 8.379,10.825 9.179,9.888A4.467,4.467,0,0,0,10.472,10.077A4.534,4.534,0,0,0,14.817,4.247z M13.932,6.291L13.932,6.286A3.566,3.566,0,0,1,10.475,9.086A3.468,3.468,0,0,1,9.2,8.848L8.639,8.988 7.765,10 6.52,10 6.02,10.5 6.02,12 4.52,12 4.02,12.5 4.02,14 2.02,14 2.02,12.4 7.069,7.35 7.179,6.808A3.4,3.4,0,0,1,6.94,5.478A3.536,3.536,0,1,1,13.932,6.287z" />
+                                                                    <DrawingGroup Opacity="0.75">
+                                                                        <GeometryDrawing Brush="#FF212121" Geometry="F1 M16,16z M0,0z M12.02,5A1,1,0,0,1,11.403,5.924A1,1,0,0,1,10.313,5.707A1,1,0,1,1,12.02,5z" />
+                                                                    </DrawingGroup>
+                                                                </DrawingGroup>
+                                                            </DrawingGroup>
+                                                        </DrawingImage.Drawing>
+                                                    </DrawingImage>
+                                                </Image.Source>
+                                            </Image>
+                                            <TextBlock Grid.Column="1" Text="{Binding DataType}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding Converter={StaticResource MilvusDataTypeToStringArrayConverter}, ConverterParameter={x:Type milvus:MilvusDataType}}" SelectedItem="{Binding DataType, Converter={StaticResource EnumToStringConverter}}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Description}"
+                                Header="Description" />
+                            <DataGridTemplateColumn
+                                Width="*"
+                                CellTemplateSelector="{StaticResource MilvusParameterTemplateSelector}"
+                                Header="Parameter" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </ScrollViewer>
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="10"
+                    Orientation="Vertical">
+                    <Button
+                        Width="32"
+                        Height="32"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Command="{Binding AddFieldComd}"
+                        ToolTip="Add New Field">
+                        <Image>
+                            <Image.Source>
+                                <DrawingImage>
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup ClipGeometry="M0,0 V16 H16 V0 H0 Z">
+                                            <DrawingGroup Opacity="1">
+                                                <GeometryDrawing Brush="#FF1F801F" Geometry="F1 M16,16z M0,0z M14,7L14,8 8,8 8,14 7,14 7,8 1,8 1,7 7,7 7,1 8,1 8,7z" />
+                                            </DrawingGroup>
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                        </Image>
+                    </Button>
+                    <Button
+                        Width="32"
+                        Height="32"
+                        Margin="0,10"
+                        Command="{Binding RemoveFieldCommand}"
+                        CommandParameter="{Binding SelectedFieldType}"
+                        ToolTip="Delete">
+                        <Image>
+                            <Image.Source>
+                                <DrawingImage>
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup ClipGeometry="M0,0 V16 H16 V0 H0 Z">
+                                            <DrawingGroup Opacity="1">
+                                                <GeometryDrawing Geometry="F1 M16,16z M0,0z M14.5,5.5L14.5,13.5 1.5,13.5 1.5,6.621 2.621,5.5 3.379,5.5 5.146,7.268 6.914,5.5z">
+                                                    <GeometryDrawing.Brush>
+                                                        <SolidColorBrush Opacity="0.1" Color="#FF212121" />
+                                                    </GeometryDrawing.Brush>
+                                                </GeometryDrawing>
+                                                <GeometryDrawing Brush="#FFC50B17" Geometry="F1 M16,16z M0,0z M3.707,3L5.854,5.146 5.146,5.854 3,3.707 0.854,5.854 0.146,5.146 2.293,3 0.146,0.854 0.854,0.146 3,2.293 5.146,0.146 5.854,0.854z" />
+                                                <GeometryDrawing Brush="#FF212121" Geometry="F1 M16,16z M0,0z M12,9L4,9 4,10 12,10z M14.5,5L7.414,5 6.414,6 14,6 14,13 2,13 2,6.121 1,7.121 1,13.5 1.5,14 14.5,14 15,13.5 15,5.5z" />
+                                            </DrawingGroup>
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                        </Image>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
+        <Separator VerticalAlignment="Bottom" />
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Name="YesBtn"
+                Grid.Column="1"
+                Width="75"
+                Height="23"
+                Command="{Binding AddCmd}"
+                Content="OK(_O)" />
+            <Button
+                Grid.Column="2"
+                Width="75"
+                Height="23"
+                Command="{Binding CanacelCmd}"
+                Content="Cancel(_C)" />
+        </Grid>
+    </Grid>
+</Window>

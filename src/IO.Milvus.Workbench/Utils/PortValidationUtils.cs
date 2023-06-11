@@ -1,10 +1,9 @@
-﻿namespace IO.Milvus.Workbench.Utils
+﻿namespace IO.Milvus.Workbench.Utils;
+
+public static class PortValidationUtils
 {
-    public static class PortValidationUtils
+    public static bool PortInRange(int port)
     {
-        public static bool PortInRange(int port)
-        {
-            return port >= 0 && port <= 65535;
-        }
+        return port >= 0 && port <= 65535;
     }
 }

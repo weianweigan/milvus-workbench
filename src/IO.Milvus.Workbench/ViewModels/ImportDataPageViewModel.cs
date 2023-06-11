@@ -10,14 +10,14 @@ namespace IO.Milvus.Workbench.ViewModels
         private CollectionNode _selectedCollection;
         private RelayCommand _browseCsvFileCmd;
 
-        public ImportDataPageViewModel(MilvusConnectionNode connection, CollectionNode collection, PartitionNode partition)
+        public ImportDataPageViewModel(DatabaseNode connection, CollectionNode collection, PartitionNode partition)
         {
             Connection = connection;
             SelectedCollection = collection;
             SelectedPartition = partition;
         }
 
-        public MilvusConnectionNode Connection { get; set; }
+        public DatabaseNode Connection { get; set; }
 
         public CollectionNode SelectedCollection
         {

@@ -7,12 +7,12 @@ namespace IO.Milvus.Workbench.Dialogs
     /// <summary>
     /// CreateCollectionDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class CreateCollectionDialog : Window
+    public partial class CreateMilvusCollectionDialog : Window
     {
-        public CreateCollectionDialog(string connectionName)
+        public CreateMilvusCollectionDialog(string connectionName)
         {
             InitializeComponent();
-            DataContext = Vm = new CreateCollectionDialogViewModel(connectionName);
+            DataContext = Vm = new CreateMilvusCollectionDialogViewModel(connectionName);
             Vm.CloseAction = (result) =>
             {
                 DialogResult = result;
@@ -21,6 +21,6 @@ namespace IO.Milvus.Workbench.Dialogs
             this.SetOwnerWindow();
         }
 
-        public CreateCollectionDialogViewModel Vm { get; }
+        public CreateMilvusCollectionDialogViewModel Vm { get; }
     }
 }

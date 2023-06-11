@@ -7,6 +7,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:IO.Milvus.Workbench.DocumentViews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:milvus="clr-namespace:IO.Milvus;assembly=IO.Milvus"
     xmlns:models="clr-namespace:IO.Milvus.Workbench.Models"
     d:DataContext="{d:DesignInstance Type=models:CollectionNode}"
     d:DesignHeight="450"
@@ -17,41 +18,72 @@
             <RowDefinition Height="3*" />
             <RowDefinition Height="7*" />
         </Grid.RowDefinitions>
-        <ListView
-            Margin="5,10"
-            Background="Transparent"
-            ItemsSource="{Binding Fields}">
-            <ListView.View>
-                <GridView>
-                    <GridView.Columns>
-                        <GridViewColumn
-                            Width="100"
-                            DisplayMemberBinding="{Binding Name}"
-                            Header="FieldName" />
-                        <GridViewColumn
-                            Width="100"
-                            DisplayMemberBinding="{Binding DataType}"
-                            Header="FieldType" />
-                        <GridViewColumn
-                            Width="100"
-                            DisplayMemberBinding="{Binding Dimension}"
-                            Header="Dimension" />
-                        <GridViewColumn
-                            Width="150"
-                            DisplayMemberBinding="{Binding IndexType}"
-                            Header="IndexType" />
-                        <GridViewColumn
-                            Width="150"
-                            DisplayMemberBinding="{Binding IndexParameters}"
-                            Header="IndexParameters" />
-                        <GridViewColumn
-                            Width="150"
-                            DisplayMemberBinding="{Binding Description}"
-                            Header="Description" />
-                    </GridView.Columns>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <DataGrid
+            AutoGenerateColumns="False"
+            CanUserDeleteRows="False"
+            CanUserSortColumns="False"
+            IsReadOnly="True"
+            ItemsSource="{Binding Fields}"
+            SelectedItem="{Binding SelectedFieldType}">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Height" Value="23" />
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Name}"
+                    Header="Name" />
+                <DataGridTemplateColumn Width="*" Header="DataType">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image Margin="2,0" Visibility="{Binding IsPrimaryKey, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Image.Source>
+                                        <DrawingImage>
+                                            <DrawingImage.Drawing>
+                                                <DrawingGroup ClipGeometry="M0,0 V16 H16 V0 H0 Z">
+                                                    <DrawingGroup Opacity="1">
+                                                        <GeometryDrawing Geometry="F1 M16,16z M0,0z M14.42,6.385A4.067,4.067,0,0,1,10.473,9.585A3.937,3.937,0,0,1,9.02,9.3L8,10.5 6.52,10.5 6.52,12.5 4.52,12.5 4.52,14.5 1.52,14.5 1.52,12.2 6.72,7A3.854,3.854,0,0,1,6.44,5.47A4.035,4.035,0,1,1,14.418,6.381z">
+                                                            <GeometryDrawing.Brush>
+                                                                <SolidColorBrush Opacity="0.1" Color="#FF212121" />
+                                                            </GeometryDrawing.Brush>
+                                                        </GeometryDrawing>
+                                                        <GeometryDrawing Brush="#FF212121" Geometry="F1 M16,16z M0,0z M14.812,4.251A4.574,4.574,0,0,0,13.674,2.331A4.532,4.532,0,0,0,6.14,6.871L1.166,11.844 1.02,12.2 1.02,14.5 1.52,15 4.52,15 5.02,14.5 5.02,13 6.52,13 7.02,12.5 7.02,11 8,11 8.379,10.825 9.179,9.888A4.467,4.467,0,0,0,10.472,10.077A4.534,4.534,0,0,0,14.817,4.247z M13.932,6.291L13.932,6.286A3.566,3.566,0,0,1,10.475,9.086A3.468,3.468,0,0,1,9.2,8.848L8.639,8.988 7.765,10 6.52,10 6.02,10.5 6.02,12 4.52,12 4.02,12.5 4.02,14 2.02,14 2.02,12.4 7.069,7.35 7.179,6.808A3.4,3.4,0,0,1,6.94,5.478A3.536,3.536,0,1,1,13.932,6.287z" />
+                                                        <DrawingGroup Opacity="0.75">
+                                                            <GeometryDrawing Brush="#FF212121" Geometry="F1 M16,16z M0,0z M12.02,5A1,1,0,0,1,11.403,5.924A1,1,0,0,1,10.313,5.707A1,1,0,1,1,12.02,5z" />
+                                                        </DrawingGroup>
+                                                    </DrawingGroup>
+                                                </DrawingGroup>
+                                            </DrawingImage.Drawing>
+                                        </DrawingImage>
+                                    </Image.Source>
+                                </Image>
+                                <TextBlock Grid.Column="1" Text="{Binding DataType}" />
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Converter={StaticResource MilvusDataTypeToStringArrayConverter}, ConverterParameter={x:Type milvus:MilvusDataType}}" SelectedItem="{Binding DataType, Converter={StaticResource EnumToStringConverter}}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Description}"
+                    Header="Description" />
+                <DataGridTemplateColumn
+                    Width="*"
+                    CellTemplateSelector="{StaticResource ReadonlyMilvusParameterTemplateSelector}"
+                    Header="Parameter" />
+            </DataGrid.Columns>
+        </DataGrid>
         <GridSplitter
             Height="5"
             HorizontalAlignment="Stretch"
@@ -101,9 +133,11 @@
                     Width="75"
                     Height="23"
                     Command="{Binding QueryCmd}"
+                    CommandParameter="{Binding ElementName=_listView}"
                     Content="Query" />
             </Grid>
             <ListView
+                Name="_listView"
                 Grid.Row="3"
                 Margin="5"
                 ItemsSource="{Binding QueryResultData}" />

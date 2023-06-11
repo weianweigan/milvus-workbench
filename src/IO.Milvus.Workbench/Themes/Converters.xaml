@@ -1,0 +1,10 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:IO.Milvus.Workbench.Converter">
+    <converters:MilvusDataTypeToStringArrayConverter x:Key="MilvusDataTypeToStringArrayConverter" />
+    <converters:EnumToStringConverter x:Key="EnumToStringConverter" />
+    <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <converters:EnumToStringArrayConverter x:Key="EnumToStringArrayConverter" />
+    <converters:ListItemToStringConverter x:Key="ListItemToStringConverter" />
+</ResourceDictionary>

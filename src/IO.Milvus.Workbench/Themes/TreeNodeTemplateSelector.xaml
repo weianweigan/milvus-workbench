@@ -8,7 +8,7 @@
     </ResourceDictionary.MergedDictionaries>
     <local:TreeNodeItemTemplateSelector x:Key="MilvisTreeNodeTemplateSeletor">
         <local:TreeNodeItemTemplateSelector.MilvusConnectionNodeDT>
-            <DataTemplate DataType="{x:Type models:MilvusConnectionNode}">
+            <DataTemplate DataType="{x:Type models:DatabaseNode}">
                 <Grid Height="20">
                     <Grid.ContextMenu>
                         <ContextMenu>
@@ -125,11 +125,13 @@
                                     <Image Source="../Assets/Icons/collectionDelete16.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Create Partition">
+                            <MenuItem Command="{Binding CreatePartitionCmd}" Header="Create Partition">
                                 <MenuItem.Icon>
                                     <Image Source="../Assets/Icons/partitionCreate16.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
+                            <MenuItem Command="{Binding CreateIndexCmd}" Header="Create Index" />
+                            <MenuItem Command="{Binding OpenSearchPageCommand}" Header="Search" />
                         </ContextMenu>
                     </Grid.ContextMenu>
                     <Grid.ToolTip>
@@ -157,6 +159,7 @@
                                     <Image Source="../Assets/Icons/partitionDelete16.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
+                            <MenuItem Command="{Binding OpenSearchPageCommand}" Header="Search" />
                         </ContextMenu>
                     </Grid.ContextMenu>
                     <Grid.ToolTip>
@@ -174,5 +177,28 @@
                 </Grid>
             </DataTemplate>
         </local:TreeNodeItemTemplateSelector.PartitionNodeDT>
+        <local:TreeNodeItemTemplateSelector.IndexNodeDT>
+            <DataTemplate DataType="{x:Type models:IndexNode}">
+                <Grid Height="20">
+                    <Grid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete Index" />
+                        </ContextMenu>
+                    </Grid.ContextMenu>
+                    <Grid.ToolTip>
+                        <TextBlock Text="{Binding}" />
+                    </Grid.ToolTip>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Image Height="18" Source="{StaticResource partition}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Text="{Binding Name}" />
+                </Grid>
+            </DataTemplate>
+        </local:TreeNodeItemTemplateSelector.IndexNodeDT>
     </local:TreeNodeItemTemplateSelector>
 </ResourceDictionary>

@@ -1,38 +1,33 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using IO.Milvus.Workbench.Utils;
-using System;
+﻿using IO.Milvus.Workbench.Utils;
 using System.Windows;
 
-namespace IO.Milvus.Workbench.ViewModels
+namespace IO.Milvus.Workbench.ViewModels;
+
+public class AddMilvusDailogViewModel : DialogViewModel
 {
-    public class AddMilvusDailogViewModel : DialogViewModel
+    public string Name { get; set; } = "Test";
+
+    public string Host { get; set; } = "192.168.100.139";
+
+    public int Port { get; set; } = 19530;
+
+    public string Username { get; set; }
+
+    public string Password { get; set; }
+
+    protected override void CancelClick()
     {
-        public string Name { get; set; } = "Test";
+        CloseAction?.Invoke(false);
+    }
 
-        public string Host { get; set; } = "192.168.100.139";
-
-        public int Port { get; set; } = 19530;
-
-        protected override void CancelClick()
+    protected override void AddClick()
+    {
+        if (!PortValidationUtils.PortInRange(Port))
         {
-            CloseAction?.Invoke(false);
+            MessageBox.Show("Port Error");
+            return;
         }
 
-        protected override void AddClick()
-        {
-            if (!IPValidationUtils.IsHost(Host))
-            {
-                MessageBox.Show("Host Error");
-                return;
-            }
-            if (!PortValidationUtils.PortInRange(Port))
-            {
-                MessageBox.Show("Port Error");
-                return;
-            }
-
-            CloseAction?.Invoke(true);
-        }
+        CloseAction?.Invoke(true);
     }
 }
