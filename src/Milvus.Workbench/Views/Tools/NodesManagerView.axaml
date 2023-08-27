@@ -1,0 +1,39 @@
+<UserControl
+    x:Class="Milvus.Workbench.Views.Tools.NodesManagerView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="300"
+    d:DesignHeight="450"
+    mc:Ignorable="d">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="30" />
+      <RowDefinition />
+    </Grid.RowDefinitions>
+    <ToolBar
+        Background="Transparent"
+        BorderThickness="0"
+        ToolBarTray.IsLocked="True">
+      <Button Command="{Binding AddCmd}" ToolTip="Add Milvus Instance">
+        <Image Source="{StaticResource addDatabase16}" />
+      </Button>
+      <Button Command="{Binding OpenVectorSearchPageCmd}" ToolTip="Open Vector Search Page">
+        <Image Source="{StaticResource vectorSearch16}" />
+      </Button>
+      <Separator />
+    </ToolBar>
+    <TreeView
+        Grid.Row="1"
+        Background="Transparent"
+        BorderThickness="0"
+        ItemsSource="{Binding Nodes}">
+      <TreeView.ItemTemplate>
+        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+          <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource MilvisTreeNodeTemplateSeletor}" />
+        </HierarchicalDataTemplate>
+      </TreeView.ItemTemplate>
+    </TreeView>
+  </Grid>
+</UserControl>
